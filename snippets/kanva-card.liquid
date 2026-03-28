@@ -1,0 +1,89 @@
+{%- doc -%}
+  Renders a Kanva editorial card wrapper with hover-zoom image and badge slot.
+
+  @param {object} image - Card image object (optional)
+  @param {string} image_alt - Alt text for the image (optional)
+  @param {string} url - Card link URL (optional)
+  @param {string} badge_text - Badge text rendered via kanva-badge (optional)
+  @param {string} title - Card title text (optional)
+  @param {string} subtitle - Card subtitle/description (optional)
+{%- enddoc -%}
+
+<div class="kanva-card">
+  <div class="kanva-card__media">
+    {% if url != blank %}<a href="{{ url }}" class="kanva-card__link">{% endif %}
+      {% if image != blank %}
+        {{ image | image_url: width: 600 | image_tag: alt: image_alt, loading: 'lazy', class: 'kanva-card__img' }}
+      {% else %}
+        {{ 'image' | placeholder_svg_tag: 'kanva-card__img kanva-card__placeholder' }}
+      {% endif %}
+      {% if badge_text != blank %}
+        <div class="kanva-card__badge">{% render 'kanva-badge', text: badge_text %}</div>
+      {% endif %}
+    {% if url != blank %}</a>{% endif %}
+  </div>
+  {% if title != blank or subtitle != blank %}
+    <div class="kanva-card__body">
+      {% if title != blank %}<h3 class="kanva-card__title">{{ title }}</h3>{% endif %}
+      {% if subtitle != blank %}<p class="kanva-card__subtitle">{{ subtitle }}</p>{% endif %}
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  .kanva-card {
+    border-radius: var(--kanva-card-radius);
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .kanva-card__media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+  }
+
+  .kanva-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .kanva-card:hover .kanva-card__img {
+    transform: scale(1.05);
+  }
+
+  .kanva-card__badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+  }
+
+  .kanva-card__body {
+    padding: 16px 0;
+  }
+
+  .kanva-card__title {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--kanva-text-primary);
+    margin: 0 0 4px;
+  }
+
+  .kanva-card__subtitle {
+    font-size: 14px;
+    color: var(--kanva-text-muted);
+    margin: 0;
+  }
+
+  .kanva-card__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .kanva-card__placeholder {
+    background: var(--kanva-cream);
+  }
+</style>
