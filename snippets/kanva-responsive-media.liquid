@@ -1,0 +1,272 @@
+{%- doc -%}
+  Renders the desktop-first media slots for Kanva editorial sections.
+
+  Implements the Phase 1 responsive editor contract: desktop media is canonical,
+  mobile media is an optional override. When mobile media is not configured or
+  `custom_mobile_media` is disabled, the section falls back cleanly to desktop
+  media via `fallback_to_desktop`.
+
+  This snippet only renders the media slot HTML. The calling section is
+  responsible for resolving `media_1`, `media_2`, `media_1_mobile`,
+  `media_2_mobile`, `fallback_to_desktop`, and all size/width values before
+  calling this snippet.
+
+  @param {string} media_1 - Resolved desktop media type for slot 1: 'image', 'video', or 'none'
+  @param {string} [media_2] - Resolved desktop media type for slot 2: 'image', 'video', or 'none'
+  @param {string} [media_1_mobile] - Resolved mobile media type for slot 1: 'image', 'video', or 'none'
+  @param {string} [media_2_mobile] - Resolved mobile media type for slot 2: 'image', 'video', or 'none'
+  @param {object} [image_1] - Desktop image object for slot 1
+  @param {object} [image_2] - Desktop image object for slot 2
+  @param {object} [image_1_mobile] - Mobile image object for slot 1
+  @param {object} [image_2_mobile] - Mobile image object for slot 2
+  @param {object} [video_1] - Desktop video object for slot 1
+  @param {object} [video_2] - Desktop video object for slot 2
+  @param {object} [video_1_mobile] - Mobile video object for slot 1
+  @param {object} [video_2_mobile] - Mobile video object for slot 2
+  @param {string} media_wrapper_desktop_class - CSS class string for desktop wrapper divs
+  @param {string} media_wrapper_mobile_class - CSS class string for mobile wrapper divs
+  @param {string} sizes - sizes attribute for desktop images
+  @param {string} sizes_mobile - sizes attribute for mobile images
+  @param {string} widths - Comma-separated widths for desktop image srcset
+  @param {string} mobile_widths - Comma-separated widths for mobile image srcset
+  @param {number} [media_count] - Total desktop media slot count
+  @param {number} [media_count_mobile] - Total mobile media slot count (after fallback resolution)
+  @param {string} [fetch_priority] - fetchpriority value for the first image slot (default: 'auto')
+
+  @example
+  {% render 'kanva-responsive-media',
+    media_1: media_1,
+    media_2: media_2,
+    media_1_mobile: media_1_mobile,
+    media_2_mobile: media_2_mobile,
+    fallback_to_desktop: fallback_to_desktop,
+    image_1: section.settings.image_1,
+    image_1_mobile: section.settings.image_1_mobile,
+    video_1: section.settings.video_1,
+    video_1_mobile: section.settings.video_1_mobile,
+    image_2: section.settings.image_2,
+    image_2_mobile: section.settings.image_2_mobile,
+    video_2: section.settings.video_2,
+    video_2_mobile: section.settings.video_2_mobile,
+    media_wrapper_desktop_class: media_wrapper_desktop_class,
+    media_wrapper_mobile_class: media_wrapper_mobile_class,
+    sizes: sizes,
+    sizes_mobile: sizes_mobile,
+    widths: widths,
+    mobile_widths: mobile_widths,
+    fetch_priority: fetch_priority,
+    media_count: media_count,
+    media_count_mobile: media_count_mobile
+  %}
+{%- enddoc -%}
+
+{% liquid
+  assign resolved_fetch_priority = fetch_priority | default: 'auto'
+  assign mobile_widths_array = mobile_widths | split: ', '
+%}
+
+{%- comment -%} Slot 1 {%- endcomment -%}
+{%- if media_1 == 'image' and media_1_mobile == 'image' -%}
+  {%- comment -%} Both desktop and mobile are images — use picture element for art direction. {%- endcomment -%}
+  <picture
+    data-testid="hero-picture-1"
+    class="hero__media"
+  >
+    <source
+      media="(max-width: 749px)"
+      srcset="
+        {%- for mobile_width in mobile_widths_array -%}
+          {{ image_1_mobile | image_url: width: mobile_width }} {{ mobile_width }}w{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      "
+      sizes="{{ sizes_mobile }}"
+      width="{{ image_1_mobile.width }}"
+      height="{{ image_1_mobile.height }}"
+    >
+    {{
+      image_1
+      | image_url: width: 3840
+      | image_tag:
+        width: image_1.width,
+        widths: widths,
+        height: image_1.height,
+        alt: image_1.alt,
+        class: 'hero__media',
+        sizes: sizes,
+        fetchpriority: resolved_fetch_priority,
+        data-testid: 'hero-desktop-image-1'
+    }}
+  </picture>
+{%- elsif media_1 == 'image' -%}
+  <div class="{{ media_wrapper_desktop_class }}">
+    {{
+      image_1
+      | image_url: width: 3840
+      | image_tag:
+        width: image_1.width,
+        widths: widths,
+        height: image_1.height,
+        alt: image_1.alt,
+        class: 'hero__media',
+        sizes: sizes,
+        fetchpriority: resolved_fetch_priority,
+        data-testid: 'hero-desktop-image-1'
+    }}
+  </div>
+{%- endif -%}
+
+{%- if media_1 == 'video' -%}
+  <div class="{{ media_wrapper_desktop_class }}">
+    {{
+      video_1
+      | video_tag:
+        poster: nil,
+        autoplay: true,
+        loop: true,
+        controls: false,
+        muted: true,
+        class: 'hero__media',
+        data-testid: 'hero-desktop-video-1'
+    }}
+  </div>
+{%- endif -%}
+
+{%- comment -%} Mobile-only slot 1 media (when desktop is different type) {%- endcomment -%}
+{%- if media_count > 0 and media_count_mobile > 0 -%}
+  {%- if media_1_mobile == 'image' and media_1 != 'image' -%}
+    <div class="{{ media_wrapper_mobile_class }}">
+      {{
+        image_1_mobile
+        | image_url: width: 1600
+        | image_tag:
+          width: image_1_mobile.width,
+          widths: mobile_widths,
+          height: image_1_mobile.height,
+          alt: image_1_mobile.alt,
+          class: 'hero__media',
+          sizes: sizes_mobile,
+          fetchpriority: resolved_fetch_priority,
+          data-testid: 'hero-mobile-image-1'
+      }}
+    </div>
+  {%- endif -%}
+
+  {%- if media_1_mobile == 'video' -%}
+    <div class="{{ media_wrapper_mobile_class }}">
+      {{
+        video_1_mobile
+        | video_tag:
+          poster: nil,
+          autoplay: true,
+          loop: true,
+          controls: false,
+          muted: true,
+          class: 'hero__media',
+          data-testid: 'hero-mobile-video-1'
+      }}
+    </div>
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} Slot 2 {%- endcomment -%}
+{%- if media_2 == 'image' and media_2_mobile == 'image' -%}
+  {%- comment -%} Both desktop and mobile are images — use picture element for art direction. {%- endcomment -%}
+  <picture
+    class="hero__media"
+    data-testid="hero-picture-2"
+  >
+    <source
+      media="(max-width: 749px)"
+      srcset="
+        {%- for mobile_width in mobile_widths_array -%}
+          {{ image_2_mobile | image_url: width: mobile_width }} {{ mobile_width }}w{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      "
+      sizes="{{ sizes_mobile }}"
+      width="{{ image_2_mobile.width }}"
+      height="{{ image_2_mobile.height }}"
+    >
+    {{
+      image_2
+      | image_url: width: 3840
+      | image_tag:
+        width: image_2.width,
+        widths: widths,
+        height: image_2.height,
+        alt: image_2.alt,
+        class: 'hero__media',
+        sizes: sizes,
+        fetchpriority: resolved_fetch_priority,
+        data-testid: 'hero-desktop-image-2'
+    }}
+  </picture>
+{%- elsif media_2 == 'image' -%}
+  <div class="{{ media_wrapper_desktop_class }}">
+    {{
+      image_2
+      | image_url: width: 3840
+      | image_tag:
+        width: image_2.width,
+        widths: widths,
+        height: image_2.height,
+        alt: image_2.alt,
+        class: 'hero__media',
+        sizes: sizes,
+        fetchpriority: resolved_fetch_priority,
+        data-testid: 'hero-desktop-image-2'
+    }}
+  </div>
+{%- endif -%}
+
+{%- if media_2 == 'video' -%}
+  <div class="{{ media_wrapper_desktop_class }}">
+    {{
+      video_2
+      | video_tag:
+        poster: nil,
+        autoplay: true,
+        loop: true,
+        controls: false,
+        muted: true,
+        class: 'hero__media',
+        data-testid: 'hero-desktop-video-2'
+    }}
+  </div>
+{%- endif -%}
+
+{%- comment -%} Mobile-only slot 2 media (when desktop is different type) {%- endcomment -%}
+{%- if media_count > 0 and media_count_mobile > 0 -%}
+  {%- if media_2_mobile == 'image' and media_2 != 'image' -%}
+    <div class="{{ media_wrapper_mobile_class }}">
+      {{
+        image_2_mobile
+        | image_url: width: 1600
+        | image_tag:
+          width: image_2_mobile.width,
+          widths: mobile_widths,
+          height: image_2_mobile.height,
+          alt: image_2_mobile.alt,
+          class: 'hero__media',
+          sizes: sizes_mobile,
+          fetchpriority: resolved_fetch_priority,
+          data-testid: 'hero-mobile-image-2'
+      }}
+    </div>
+  {%- endif -%}
+
+  {%- if media_2_mobile == 'video' -%}
+    <div class="{{ media_wrapper_mobile_class }}">
+      {{
+        video_2_mobile
+        | video_tag:
+          poster: nil,
+          autoplay: true,
+          loop: true,
+          controls: false,
+          muted: true,
+          class: 'hero__media',
+          data-testid: 'hero-mobile-video-2'
+      }}
+    </div>
+  {%- endif -%}
+{%- endif -%}
