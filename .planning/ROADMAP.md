@@ -47,7 +47,7 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [x] 02-01-PLAN.md — Add Kanva design tokens to global stylesheet and create shared heading, badge, and card snippets.
-- [ ] 02-02-PLAN.md — Create feature strip and testimonial standalone sections.
+- [x] 02-02-PLAN.md — Create feature strip and testimonial standalone sections.
 - [x] 02-03-PLAN.md — Create newsletter and image grid sections, adapt media-with-content for Kanva story rows.
 
 ### Phase 3: Landing Page Composition
