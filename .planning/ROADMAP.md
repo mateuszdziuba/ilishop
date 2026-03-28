@@ -33,7 +33,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 Plans:
 - [ ] 01-01-PLAN.md - Freeze the responsive editor contract and prove it through a minimal shared media helper in `hero`.
-- [ ] 01-02-PLAN.md - Add the protected runtime smoke checklist and the lightest executable Theme Check gate.
+- [x] 01-02-PLAN.md - Add the protected runtime smoke checklist and the lightest executable Theme Check gate.
 
 ### Phase 2: Shared Kanva Primitives
 **Goal**: Merchants have a reusable Kanva component layer built on Horizon sections, blocks, snippets, and shared styling instead of page-specific clones.
@@ -95,7 +95,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Stabilization and Editor Contract | 0/TBD | Not started | - |
+| 1. Stabilization and Editor Contract | 1/2 | In Progress|  |
 | 2. Shared Kanva Primitives | 0/TBD | Not started | - |
 | 3. Landing Page Composition | 0/TBD | Not started | - |
 | 4. Collection Experience | 0/TBD | Not started | - |
