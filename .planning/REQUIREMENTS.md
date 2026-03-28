@@ -7,17 +7,17 @@
 
 ### Theme Editor
 
-- [ ] **EDIT-01**: Merchant can build the requested Kanva storefront pages from reusable Horizon-based sections and blocks instead of page-specific hardcoded templates
+- [x] **EDIT-01**: Merchant can build the requested Kanva storefront pages from reusable Horizon-based sections and blocks instead of page-specific hardcoded templates
 - [x] **EDIT-02**: Merchant can configure separate desktop and mobile media for art-directed sections without duplicating section content
 - [x] **EDIT-03**: Merchant can control desktop/mobile content positioning for supported editorial sections from the theme editor
-- [ ] **EDIT-04**: Merchant can reorder, duplicate, and remove the new Kanva sections in the Shopify theme editor without code changes
+- [x] **EDIT-04**: Merchant can reorder, duplicate, and remove the new Kanva sections in the Shopify theme editor without code changes
 - [x] **EDIT-05**: Merchant sees a consistent responsive-settings contract across the new Kanva sections, using predictable setting names and fallback behavior
 
 ### Shared Components
 
-- [ ] **COMP-01**: Merchant can reuse shared Kanva editorial sections for feature strips, split media/text rows, testimonials, newsletter, and social/image grids across multiple page types
+- [x] **COMP-01**: Merchant can reuse shared Kanva editorial sections for feature strips, split media/text rows, testimonials, newsletter, and social/image grids across multiple page types
 - [x] **COMP-02**: Shopper sees Kanva-aligned shared heading, spacing, badge, and card treatments applied consistently across landing, collections, about, and blog pages
-- [ ] **COMP-03**: Shopper sees the rebuilt pages implemented on Horizon primitives and reusable snippets rather than duplicated page-only markup
+- [x] **COMP-03**: Shopper sees the rebuilt pages implemented on Horizon primitives and reusable snippets rather than duplicated page-only markup
 
 ### Landing Page
 
@@ -80,14 +80,14 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| EDIT-01 | Phase 2 | Pending |
+| EDIT-01 | Phase 2 | Complete |
 | EDIT-02 | Phase 1 | Complete |
 | EDIT-03 | Phase 1 | Complete |
-| EDIT-04 | Phase 2 | Pending |
+| EDIT-04 | Phase 2 | Complete |
 | EDIT-05 | Phase 1 | Complete |
-| COMP-01 | Phase 2 | Pending |
+| COMP-01 | Phase 2 | Complete |
 | COMP-02 | Phase 2 | Complete |
-| COMP-03 | Phase 2 | Pending |
+| COMP-03 | Phase 2 | Complete |
 | HOME-01 | Phase 3 | Pending |
 | HOME-02 | Phase 3 | Pending |
 | HOME-03 | Phase 3 | Pending |

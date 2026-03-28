@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-28T12:46:05.889Z"
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-03-28T22:07:33.969Z"
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-25)
 ## Current Position
 
 Phase: 02 (shared-kanva-primitives) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -48,6 +48,7 @@ Plan: 2 of 3
 | Phase 01 P02 | 7 | 2 tasks | 3 files |
 | Phase 01-stabilization-and-editor-contract P01-01 | 8 | 2 tasks | 3 files |
 | Phase 02-shared-kanva-primitives P01 | 12 | 2 tasks | 4 files |
+| Phase 02-shared-kanva-primitives P03 | 20 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -66,6 +67,8 @@ Recent decisions affecting current work:
 - [Phase 01-01]: fallback_to_desktop resolved by calling section before render call; helper works purely with resolved media type strings
 - [Phase 02-shared-kanva-primitives]: Kanva tokens placed in existing :root block in theme-styles-variables.liquid (not a new snippet) to avoid Shopify deduplication issues
 - [Phase 02-shared-kanva-primitives]: All token names use --kanva- prefix to isolate from Horizon --color-* scheme system
+- [Phase 02-03]: kanva-image-grid-item block uses blocks/ file for kanva-card render per Horizon OS 2.0 block architecture
+- [Phase 02-03]: kanva-split CSS modifier applied via color_scheme == scheme-3 heuristic — backwards-compatible, no new settings
 
 ### Pending Todos
 
@@ -78,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T12:46:05.887Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-03-28T22:07:33.967Z
+Stopped at: Completed 02-03-PLAN.md
 Resume file: None

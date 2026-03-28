@@ -48,7 +48,7 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md — Add Kanva design tokens to global stylesheet and create shared heading, badge, and card snippets.
 - [ ] 02-02-PLAN.md — Create feature strip and testimonial standalone sections.
-- [ ] 02-03-PLAN.md — Create newsletter and image grid sections, adapt media-with-content for Kanva story rows.
+- [x] 02-03-PLAN.md — Create newsletter and image grid sections, adapt media-with-content for Kanva story rows.
 
 ### Phase 3: Landing Page Composition
 **Goal**: Shoppers land on a Kanva-style homepage assembled from reusable Horizon-aligned components and real Shopify content links.
@@ -100,7 +100,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Stabilization and Editor Contract | 2/2 | Complete |  |
-| 2. Shared Kanva Primitives | 0/3 | Not started | - |
+| 2. Shared Kanva Primitives | 2/3 | In Progress|  |
 | 3. Landing Page Composition | 0/TBD | Not started | - |
 | 4. Collection Experience | 0/TBD | Not started | - |
 | 5. About Page System | 0/TBD | Not started | - |
