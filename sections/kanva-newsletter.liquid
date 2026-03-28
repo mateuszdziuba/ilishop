@@ -1,0 +1,221 @@
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style kanva-newsletter"
+  style="{% render 'spacing-style', settings: section.settings %}"
+  data-testid="kanva-newsletter"
+>
+  <div class="kanva-newsletter__inner">
+    <div class="kanva-newsletter__content">
+      {% render 'kanva-heading',
+        label: section.settings.label,
+        heading: section.settings.heading,
+        subtext: section.settings.subtext,
+        heading_level: 'h2'
+      %}
+      {%- comment -%} CRITICAL: Use 'customer' form, NOT 'contact' — native Shopify newsletter subscription {%- endcomment -%}
+      {% form 'customer', id: 'kanva-newsletter-' | append: section.id %}
+        {%- if form.posted_successfully? -%}
+          <p class="kanva-newsletter__success">{{ section.settings.success_message | default: 'Thank you for subscribing!' }}</p>
+        {%- else -%}
+          {%- if form.errors -%}
+            <p class="kanva-newsletter__error">{{ form.errors.translated_fields['email'] | default: 'Please enter a valid email.' }}</p>
+          {%- endif -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <div class="kanva-newsletter__form">
+            <input
+              type="email"
+              name="contact[email]"
+              id="kanva-newsletter-email-{{ section.id }}"
+              placeholder="{{ section.settings.email_placeholder | default: 'Your email address' }}"
+              required
+              class="kanva-newsletter__input"
+              autocomplete="email"
+            >
+            <button type="submit" class="kanva-newsletter__btn">
+              {{ section.settings.button_label | default: 'Subscribe' }}
+            </button>
+          </div>
+        {%- endif -%}
+      {% endform %}
+    </div>
+
+    {%- if section.settings.image != blank -%}
+      <div class="kanva-newsletter__image">
+        {{ section.settings.image | image_url: width: 600 | image_tag: alt: section.settings.image.alt, loading: 'lazy', class: 'kanva-newsletter__img' }}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .kanva-newsletter__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .kanva-newsletter__form {
+    display: flex;
+    gap: 0;
+    margin-top: 24px;
+  }
+
+  .kanva-newsletter__input {
+    flex: 1;
+    padding: 14px 20px;
+    border: 1px solid var(--kanva-border);
+    border-radius: var(--kanva-btn-radius) 0 0 var(--kanva-btn-radius);
+    font-size: 15px;
+    outline: none;
+    background: #fff;
+  }
+
+  .kanva-newsletter__input:focus {
+    border-color: var(--kanva-text-primary);
+  }
+
+  .kanva-newsletter__btn {
+    padding: 14px 28px;
+    background: var(--kanva-text-primary);
+    color: #fff;
+    border: 0;
+    border-radius: 0 var(--kanva-btn-radius) var(--kanva-btn-radius) 0;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .kanva-newsletter__btn:hover {
+    opacity: 0.85;
+  }
+
+  .kanva-newsletter__img {
+    width: 100%;
+    border-radius: var(--kanva-card-radius);
+    object-fit: cover;
+    max-height: 400px;
+  }
+
+  .kanva-newsletter__success {
+    color: var(--kanva-sage);
+    font-weight: 500;
+    margin-top: 16px;
+  }
+
+  .kanva-newsletter__error {
+    color: #c0392b;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .kanva-newsletter__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .kanva-newsletter__image {
+      order: -1;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Kanva Newsletter",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-3"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        { "value": "page-width", "label": "Page width" },
+        { "value": "full-width", "label": "Full width" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section label"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Stay Updated, Stay Radiant"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Get skincare tips, new arrivals, and exclusive offers delivered to your inbox."
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "Email placeholder",
+      "default": "Your email address"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thank you for subscribing!"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Decorative image"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Kanva Newsletter",
+      "category": "Kanva Editorial"
+    }
+  ]
+}
+{% endschema %}
