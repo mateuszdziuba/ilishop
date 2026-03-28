@@ -1,0 +1,39 @@
+{%- doc -%}
+  Renders a single image grid item for the kanva-image-grid section.
+  Uses the shared kanva-card snippet for consistent Kanva card treatment.
+
+  @param {image} image - The grid item image
+  @param {string} alt - The image alt text
+  @param {url} url - Optional link URL for the grid item
+{%- enddoc -%}
+
+<div class="kanva-image-grid__item" {{ block.shopify_attributes }}>
+  {% render 'kanva-card',
+    image: block.settings.image,
+    image_alt: block.settings.alt,
+    url: block.settings.url
+  %}
+</div>
+
+{% schema %}
+{
+  "name": "Image",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "url",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "alt",
+      "label": "Alt text"
+    }
+  ]
+}
+{% endschema %}
