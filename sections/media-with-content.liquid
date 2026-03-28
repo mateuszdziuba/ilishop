@@ -12,7 +12,7 @@
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
-  class="section section--{{ section.settings.section_width }} disable-section-top-offset media-with-content color-{{ section.settings.color_scheme }} spacing-style {{ media_class_modifier }}"
+  class="section section--{{ section.settings.section_width }} disable-section-top-offset media-with-content color-{{ section.settings.color_scheme }} spacing-style {{ media_class_modifier }}{%- if section.settings.color_scheme == 'scheme-3' %} kanva-split{%- endif -%}"
   data-testid="media-with-content"
   style="
     {%- render 'spacing-style', settings: section.settings %}
@@ -192,6 +192,15 @@
     --hero-min-height: 500px;
 
     min-height: 500px;
+  }
+
+  /* Kanva story row treatment (Phase 2) */
+  .media-with-content.kanva-split .media-with-content__content {
+    padding-block: 40px;
+  }
+  .media-with-content.kanva-split .media-with-content__media img,
+  .media-with-content.kanva-split .media-with-content__media video {
+    border-radius: var(--kanva-card-radius, 10px);
   }
 {% endstylesheet %}
 
@@ -425,6 +434,18 @@
           },
           "block_order": ["caption"]
         }
+      }
+    },
+    {
+      "name": "Kanva Story Row",
+      "category": "Kanva Editorial",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "media_width": "medium",
+        "media_height": "auto",
+        "section_width": "page-width",
+        "padding-block-start": 80,
+        "padding-block-end": 80
       }
     }
   ]
