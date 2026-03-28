@@ -118,3 +118,12 @@ None — no external service configuration required. The gate uses `shopify them
 ---
 *Phase: 01-stabilization-and-editor-contract*
 *Completed: 2026-03-28*
+
+## Self-Check: PASSED
+
+- FOUND: `.planning/phases/01-stabilization-and-editor-contract/01-protected-runtime-checklist.md`
+- FOUND: `.planning/phases/01-stabilization-and-editor-contract/01-regression-baseline.md`
+- FOUND: `scripts/phase1-regression-gate.sh`
+- FOUND: `.planning/phases/01-stabilization-and-editor-contract/01-02-SUMMARY.md`
+- FOUND: commit `59cb5cd` (Task 1)
+- FOUND: commit `44083b1` (Task 2)
