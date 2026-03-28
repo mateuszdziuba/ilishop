@@ -8,10 +8,10 @@
 ### Theme Editor
 
 - [ ] **EDIT-01**: Merchant can build the requested Kanva storefront pages from reusable Horizon-based sections and blocks instead of page-specific hardcoded templates
-- [ ] **EDIT-02**: Merchant can configure separate desktop and mobile media for art-directed sections without duplicating section content
-- [ ] **EDIT-03**: Merchant can control desktop/mobile content positioning for supported editorial sections from the theme editor
+- [x] **EDIT-02**: Merchant can configure separate desktop and mobile media for art-directed sections without duplicating section content
+- [x] **EDIT-03**: Merchant can control desktop/mobile content positioning for supported editorial sections from the theme editor
 - [ ] **EDIT-04**: Merchant can reorder, duplicate, and remove the new Kanva sections in the Shopify theme editor without code changes
-- [ ] **EDIT-05**: Merchant sees a consistent responsive-settings contract across the new Kanva sections, using predictable setting names and fallback behavior
+- [x] **EDIT-05**: Merchant sees a consistent responsive-settings contract across the new Kanva sections, using predictable setting names and fallback behavior
 
 ### Shared Components
 
@@ -48,7 +48,7 @@
 
 - [x] **QUAL-01**: Shopper can use existing Horizon header, collection, blog, and shared storefront behavior without regression after the Kanva rebuild is introduced
 - [ ] **QUAL-02**: Shopper can use the rebuilt landing, collection, about, and blog pages on desktop and mobile breakpoints with stable layout behavior
-- [ ] **QUAL-03**: Merchant can preview and edit the rebuilt sections inside the Shopify theme editor without broken settings states or duplicated breakpoint content
+- [x] **QUAL-03**: Merchant can preview and edit the rebuilt sections inside the Shopify theme editor without broken settings states or duplicated breakpoint content
 
 ## v2 Requirements
 
@@ -81,10 +81,10 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | EDIT-01 | Phase 2 | Pending |
-| EDIT-02 | Phase 1 | Pending |
-| EDIT-03 | Phase 1 | Pending |
+| EDIT-02 | Phase 1 | Complete |
+| EDIT-03 | Phase 1 | Complete |
 | EDIT-04 | Phase 2 | Pending |
-| EDIT-05 | Phase 1 | Pending |
+| EDIT-05 | Phase 1 | Complete |
 | COMP-01 | Phase 2 | Pending |
 | COMP-02 | Phase 2 | Pending |
 | COMP-03 | Phase 2 | Pending |
@@ -103,7 +103,7 @@
 | BLOG-03 | Phase 6 | Pending |
 | QUAL-01 | Phase 1 | Complete |
 | QUAL-02 | Phase 6 | Pending |
-| QUAL-03 | Phase 1 | Pending |
+| QUAL-03 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 24 total

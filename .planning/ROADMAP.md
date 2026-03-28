@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Shopper can continue using existing Horizon header, shared storefront, and high-risk collection or blog runtime flows without regressions after the foundation changes land.
 **Plans**: 2 plans
 Plans:
-- [ ] 01-01-PLAN.md - Freeze the responsive editor contract and prove it through a minimal shared media helper in `hero`.
+- [x] 01-01-PLAN.md - Freeze the responsive editor contract and prove it through a minimal shared media helper in `hero`.
 - [x] 01-02-PLAN.md - Add the protected runtime smoke checklist and the lightest executable Theme Check gate.
 
 ### Phase 2: Shared Kanva Primitives

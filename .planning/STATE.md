@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-03-28T12:07:54.077Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 01-01-PLAN.md — responsive editor contract and kanva-responsive-media helper
+last_updated: "2026-03-28T12:09:07.249Z"
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -46,6 +46,7 @@ Plan: 2 of 2
 - Trend: Stable
 
 | Phase 01 P02 | 7 | 2 tasks | 3 files |
+| Phase 01-stabilization-and-editor-contract P01-01 | 8 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -60,6 +61,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Regression gate uses shopify theme check --fail-level error rather than a full browser test framework — meets Phase 1 D-11 (lightest viable harness)
 - [Phase 01]: Gate accounts for 2 pre-existing Horizon UniqueStaticBlockId errors in sections/header.liquid — exits 0 when only baseline errors are present
 - [Phase 01]: Smoke checklist uses 21 selector-anchored manual checks across 5 surfaces (Header, Section wrapper, Collection, Blog, Theme editor)
+- [Phase 01-01]: Extracted media slot rendering into kanva-responsive-media.liquid; hero retains blurred reflection logic and media resolution
+- [Phase 01-01]: fallback_to_desktop resolved by calling section before render call; helper works purely with resolved media type strings
 
 ### Pending Todos
 
@@ -72,6 +75,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T12:07:54.074Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-03-28T12:09:07.246Z
+Stopped at: Completed 01-01-PLAN.md — responsive editor contract and kanva-responsive-media helper
 Resume file: None
