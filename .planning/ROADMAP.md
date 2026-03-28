@@ -46,7 +46,7 @@ Plans:
   4. Shared feature strips, split media or text rows, testimonials, newsletter modules, and social or image grids render through reusable snippets and sections rather than duplicated markup.
 **Plans**: 3 plans
 Plans:
-- [ ] 02-01-PLAN.md — Add Kanva design tokens to global stylesheet and create shared heading, badge, and card snippets.
+- [x] 02-01-PLAN.md — Add Kanva design tokens to global stylesheet and create shared heading, badge, and card snippets.
 - [ ] 02-02-PLAN.md — Create feature strip and testimonial standalone sections.
 - [ ] 02-03-PLAN.md — Create newsletter and image grid sections, adapt media-with-content for Kanva story rows.
 

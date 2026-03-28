@@ -16,7 +16,7 @@
 ### Shared Components
 
 - [ ] **COMP-01**: Merchant can reuse shared Kanva editorial sections for feature strips, split media/text rows, testimonials, newsletter, and social/image grids across multiple page types
-- [ ] **COMP-02**: Shopper sees Kanva-aligned shared heading, spacing, badge, and card treatments applied consistently across landing, collections, about, and blog pages
+- [x] **COMP-02**: Shopper sees Kanva-aligned shared heading, spacing, badge, and card treatments applied consistently across landing, collections, about, and blog pages
 - [ ] **COMP-03**: Shopper sees the rebuilt pages implemented on Horizon primitives and reusable snippets rather than duplicated page-only markup
 
 ### Landing Page
@@ -86,7 +86,7 @@
 | EDIT-04 | Phase 2 | Pending |
 | EDIT-05 | Phase 1 | Complete |
 | COMP-01 | Phase 2 | Pending |
-| COMP-02 | Phase 2 | Pending |
+| COMP-02 | Phase 2 | Complete |
 | COMP-03 | Phase 2 | Pending |
 | HOME-01 | Phase 3 | Pending |
 | HOME-02 | Phase 3 | Pending |
