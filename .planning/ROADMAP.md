@@ -59,7 +59,11 @@ Plans:
   2. Shopper can see a reusable trust or value strip directly below the hero as part of the homepage composition.
   3. Shopper can discover featured product groups or collections from the homepage through real Shopify collection or product-list sections.
   4. Shopper can see homepage testimonial, newsletter, and social-proof sections that match the Kanva editorial direction.
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 03-01-PLAN.md — Create kanva-hero section with multi-slide carousel, dot navigation, preview rail, and carousel JS.
+- [ ] 03-02-PLAN.md — Create kanva-marquee and kanva-bento-grid sections, add --kanva-navy design token.
+- [ ] 03-03-PLAN.md — Compose complete templates/index.json wiring all 10 homepage sections with Kanva defaults.
 
 ### Phase 4: Collection Experience
 **Goal**: Collection browsing keeps Horizon's native runtime behavior while gaining Kanva-aligned merchandising and editorial framing.
@@ -101,7 +105,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 |-------|----------------|--------|-----------|
 | 1. Stabilization and Editor Contract | 2/2 | Complete |  |
 | 2. Shared Kanva Primitives | 2/3 | In Progress|  |
-| 3. Landing Page Composition | 0/TBD | Not started | - |
+| 3. Landing Page Composition | 0/3 | Not started | - |
 | 4. Collection Experience | 0/TBD | Not started | - |
 | 5. About Page System | 0/TBD | Not started | - |
 | 6. Blog Curation and Responsive Hardening | 0/TBD | Not started | - |
