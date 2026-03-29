@@ -1,0 +1,89 @@
+{%- doc -%}
+  Renders a Ili editorial card wrapper with hover-zoom image and badge slot.
+
+  @param {object} image - Card image object (optional)
+  @param {string} image_alt - Alt text for the image (optional)
+  @param {string} url - Card link URL (optional)
+  @param {string} badge_text - Badge text rendered via ili-badge (optional)
+  @param {string} title - Card title text (optional)
+  @param {string} subtitle - Card subtitle/description (optional)
+{%- enddoc -%}
+
+<div class="ili-card">
+  <div class="ili-card__media">
+    {% if url != blank %}<a href="{{ url }}" class="ili-card__link">{% endif %}
+      {% if image != blank %}
+        {{ image | image_url: width: 600 | image_tag: alt: image_alt, loading: 'lazy', class: 'ili-card__img' }}
+      {% else %}
+        {{ 'image' | placeholder_svg_tag: 'ili-card__img ili-card__placeholder' }}
+      {% endif %}
+      {% if badge_text != blank %}
+        <div class="ili-card__badge">{% render 'ili-badge', text: badge_text %}</div>
+      {% endif %}
+    {% if url != blank %}</a>{% endif %}
+  </div>
+  {% if title != blank or subtitle != blank %}
+    <div class="ili-card__body">
+      {% if title != blank %}<h3 class="ili-card__title">{{ title }}</h3>{% endif %}
+      {% if subtitle != blank %}<p class="ili-card__subtitle">{{ subtitle }}</p>{% endif %}
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  .ili-card {
+    border-radius: var(--ili-card-radius);
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .ili-card__media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+  }
+
+  .ili-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .ili-card:hover .ili-card__img {
+    transform: scale(1.05);
+  }
+
+  .ili-card__badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+  }
+
+  .ili-card__body {
+    padding: 16px 0;
+  }
+
+  .ili-card__title {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ili-text-primary);
+    margin: 0 0 4px;
+  }
+
+  .ili-card__subtitle {
+    font-size: 14px;
+    color: var(--ili-text-muted);
+    margin: 0;
+  }
+
+  .ili-card__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .ili-card__placeholder {
+    background: var(--ili-cream);
+  }
+</style>

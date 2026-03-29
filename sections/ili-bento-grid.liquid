@@ -1,0 +1,517 @@
+{%- comment -%} sections/ili-bento-grid.liquid {%- endcomment -%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style ili-bento"
+  style="{% render 'spacing-style', settings: section.settings %}"
+  data-testid="ili-bento-grid"
+>
+  {%- if section.settings.label != blank or section.settings.heading != blank -%}
+    {%- render 'ili-heading', label: section.settings.label, heading: section.settings.heading, alignment: 'center' -%}
+  {%- endif -%}
+
+  <div class="ili-bento__grid">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+
+        {%- when 'ili-bento-title' -%}
+          <div
+            class="ili-bento__item ili-bento__item--title"
+            style="{% if block.settings.col_span != '1' %}grid-column: span {{ block.settings.col_span }};{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            <h3 class="ili-bento__card-heading">{{ block.settings.heading }}</h3>
+          </div>
+
+        {%- when 'ili-bento-image' -%}
+          <div
+            class="ili-bento__item ili-bento__item--image"
+            style="{% if block.settings.col_span != '1' %}grid-column: span {{ block.settings.col_span }};{% endif %}{% if block.settings.row_span %}grid-row: span 2;{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 800 | image_tag: class: 'ili-bento__image', loading: 'lazy', sizes: '(max-width: 749px) 50vw, 25vw' }}
+            {%- else -%}
+              {{ 'product-1' | placeholder_svg_tag: 'ili-bento__image ili-bento__placeholder' }}
+            {%- endif -%}
+          </div>
+
+        {%- when 'ili-bento-rating' -%}
+          <div
+            class="ili-bento__item ili-bento__item--rating"
+            style="{% if block.settings.col_span != '1' %}grid-column: span {{ block.settings.col_span }};{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            <div class="ili-bento__stars">
+              {%- assign star_count = block.settings.stars | default: 5 -%}
+              {%- for i in (1..star_count) -%}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--ili-sage)" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              {%- endfor -%}
+            </div>
+            <p class="ili-bento__rating-value">{{ block.settings.rating_value }}</p>
+            <p class="ili-bento__rating-label">{{ block.settings.rating_label }}</p>
+          </div>
+
+        {%- when 'ili-bento-text' -%}
+          <div
+            class="ili-bento__item ili-bento__item--text"
+            style="{% if block.settings.col_span != '1' %}grid-column: span {{ block.settings.col_span }};{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            {%- if block.settings.show_checkmark -%}
+              <span class="ili-bento__checkmark" aria-hidden="true">&#10003;</span>
+            {%- endif -%}
+            <h4 class="ili-bento__card-subheading">{{ block.settings.heading }}</h4>
+            {%- if block.settings.body != blank -%}
+              <p class="ili-bento__card-body">{{ block.settings.body }}</p>
+            {%- endif -%}
+          </div>
+
+        {%- when 'ili-bento-navy' -%}
+          <div
+            class="ili-bento__item ili-bento__item--navy"
+            style="{% if block.settings.col_span != '1' %}grid-column: span {{ block.settings.col_span }};{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            <h4 class="ili-bento__card-heading">
+              {{ block.settings.heading }}
+              {%- if block.settings.heading_serif_part != blank -%}
+                <em>{{ block.settings.heading_serif_part }}</em>
+              {%- endif -%}
+            </h4>
+            <ul class="ili-bento__bullet-list">
+              {%- if block.settings.bullet_1 != blank -%}<li>{{ block.settings.bullet_1 }}</li>{%- endif -%}
+              {%- if block.settings.bullet_2 != blank -%}<li>{{ block.settings.bullet_2 }}</li>{%- endif -%}
+              {%- if block.settings.bullet_3 != blank -%}<li>{{ block.settings.bullet_3 }}</li>{%- endif -%}
+            </ul>
+          </div>
+
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .ili-bento__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .ili-bento__item {
+    background: var(--ili-cream);
+    border-radius: var(--ili-card-radius);
+    padding: 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .ili-bento__card-heading {
+    font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 400;
+    color: var(--ili-text-primary);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .ili-bento__card-subheading {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ili-text-primary);
+    margin: 0 0 8px;
+  }
+
+  .ili-bento__card-body {
+    font-size: 14px;
+    color: var(--ili-text-muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .ili-bento__item--image {
+    padding: 0;
+  }
+
+  .ili-bento__image,
+  .ili-bento__placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--ili-card-radius);
+    display: block;
+  }
+
+  .ili-bento__item--navy {
+    background: var(--ili-navy);
+    color: #fff;
+  }
+
+  .ili-bento__item--navy .ili-bento__card-heading {
+    color: #fff;
+  }
+
+  .ili-bento__item--navy em {
+    font-family: var(--font-heading--family);
+    font-style: italic;
+  }
+
+  .ili-bento__bullet-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+  }
+
+  .ili-bento__bullet-list li {
+    padding: 4px 0;
+    opacity: 0.85;
+    font-size: 14px;
+  }
+
+  .ili-bento__stars svg {
+    display: inline-block;
+    margin-right: 2px;
+  }
+
+  .ili-bento__rating-value {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 8px 0 4px;
+    color: var(--ili-text-primary);
+  }
+
+  .ili-bento__rating-label {
+    font-size: 13px;
+    color: var(--ili-text-muted);
+    margin: 0;
+  }
+
+  .ili-bento__checkmark {
+    font-size: 32px;
+    color: var(--ili-sage);
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ili-bento__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 479px) {
+    .ili-bento__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Ili Bento Grid",
+  "tag": "section",
+  "class": "ili-bento-section",
+  "disabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        { "value": "page-width", "label": "Page width" },
+        { "value": "full-width", "label": "Full width" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section label"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section heading",
+      "default": "Why Choose Us"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ili-bento-title",
+      "name": "Title card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Clean Beauty Solutions"
+        },
+        {
+          "type": "select",
+          "id": "col_span",
+          "label": "Column span",
+          "options": [
+            { "value": "1", "label": "1" },
+            { "value": "2", "label": "2" },
+            { "value": "3", "label": "3" },
+            { "value": "4", "label": "4" }
+          ],
+          "default": "2"
+        }
+      ]
+    },
+    {
+      "type": "ili-bento-image",
+      "name": "Image card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "select",
+          "id": "col_span",
+          "label": "Column span",
+          "options": [
+            { "value": "1", "label": "1" },
+            { "value": "2", "label": "2" },
+            { "value": "3", "label": "3" },
+            { "value": "4", "label": "4" }
+          ],
+          "default": "1"
+        },
+        {
+          "type": "checkbox",
+          "id": "row_span",
+          "label": "Span 2 rows",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "ili-bento-rating",
+      "name": "Rating card",
+      "settings": [
+        {
+          "type": "range",
+          "id": "stars",
+          "label": "Stars",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "rating_value",
+          "label": "Rating value",
+          "default": "4.8/5"
+        },
+        {
+          "type": "text",
+          "id": "rating_label",
+          "label": "Rating label",
+          "default": "Average Rating"
+        },
+        {
+          "type": "select",
+          "id": "col_span",
+          "label": "Column span",
+          "options": [
+            { "value": "1", "label": "1" },
+            { "value": "2", "label": "2" },
+            { "value": "3", "label": "3" },
+            { "value": "4", "label": "4" }
+          ],
+          "default": "1"
+        }
+      ]
+    },
+    {
+      "type": "ili-bento-text",
+      "name": "Text card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Body text"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_checkmark",
+          "label": "Show checkmark icon",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "col_span",
+          "label": "Column span",
+          "options": [
+            { "value": "1", "label": "1" },
+            { "value": "2", "label": "2" },
+            { "value": "3", "label": "3" },
+            { "value": "4", "label": "4" }
+          ],
+          "default": "1"
+        }
+      ]
+    },
+    {
+      "type": "ili-bento-navy",
+      "name": "Navy accent card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Your Skin"
+        },
+        {
+          "type": "text",
+          "id": "heading_serif_part",
+          "label": "Heading italic part",
+          "default": "Deserves Better"
+        },
+        {
+          "type": "text",
+          "id": "bullet_1",
+          "label": "Bullet 1",
+          "default": "Dermatologist tested"
+        },
+        {
+          "type": "text",
+          "id": "bullet_2",
+          "label": "Bullet 2",
+          "default": "Hypoallergenic formula"
+        },
+        {
+          "type": "text",
+          "id": "bullet_3",
+          "label": "Bullet 3",
+          "default": "pH balanced"
+        },
+        {
+          "type": "select",
+          "id": "col_span",
+          "label": "Column span",
+          "options": [
+            { "value": "1", "label": "1" },
+            { "value": "2", "label": "2" },
+            { "value": "3", "label": "3" },
+            { "value": "4", "label": "4" }
+          ],
+          "default": "1"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ili Bento Grid",
+      "category": "Ili Editorial",
+      "blocks": [
+        {
+          "type": "ili-bento-title",
+          "settings": {
+            "heading": "Clean Beauty Solutions",
+            "col_span": "2"
+          }
+        },
+        {
+          "type": "ili-bento-image",
+          "settings": {
+            "col_span": "1"
+          }
+        },
+        {
+          "type": "ili-bento-rating",
+          "settings": {
+            "stars": 5,
+            "rating_value": "4.8/5",
+            "rating_label": "Average Rating",
+            "col_span": "1"
+          }
+        },
+        {
+          "type": "ili-bento-image",
+          "settings": {
+            "col_span": "1",
+            "row_span": true
+          }
+        },
+        {
+          "type": "ili-bento-text",
+          "settings": {
+            "heading": "Eco-Friendly Packaging",
+            "body": "Sustainable materials for a better planet.",
+            "col_span": "1"
+          }
+        },
+        {
+          "type": "ili-bento-navy",
+          "settings": {
+            "heading": "Your Skin",
+            "heading_serif_part": "Deserves Better",
+            "bullet_1": "Dermatologist tested",
+            "bullet_2": "Hypoallergenic formula",
+            "bullet_3": "pH balanced",
+            "col_span": "1"
+          }
+        },
+        {
+          "type": "ili-bento-text",
+          "settings": {
+            "heading": "Proven Effectiveness",
+            "body": "Clinically tested formulas that deliver real results.",
+            "show_checkmark": true,
+            "col_span": "2"
+          }
+        }
+      ],
+      "settings": {
+        "heading": "Why Choose Us"
+      }
+    }
+  ]
+}
+{% endschema %}

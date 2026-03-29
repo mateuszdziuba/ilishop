@@ -1,5 +1,5 @@
 {%- doc -%}
-  Renders the desktop-first media slots for Kanva editorial sections.
+  Renders the desktop-first media slots for Ili editorial sections.
 
   Implements the Phase 1 responsive editor contract: desktop media is canonical,
   mobile media is an optional override. When mobile media is not configured or
@@ -32,9 +32,8 @@
   @param {number} [media_count] - Total desktop media slot count
   @param {number} [media_count_mobile] - Total mobile media slot count (after fallback resolution)
   @param {string} [fetch_priority] - fetchpriority value for the first image slot (default: 'auto')
-
   @example
-  {% render 'kanva-responsive-media',
+  {% render 'ili-responsive-media',
     media_1: media_1,
     media_2: media_2,
     media_1_mobile: media_1_mobile,

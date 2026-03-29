@@ -1,0 +1,153 @@
+{%- comment -%} sections/ili-marquee.liquid {%- endcomment -%}
+
+<div
+  class="ili-marquee color-{{ section.settings.color_scheme }}"
+  style="{% render 'spacing-style', settings: section.settings %}"
+  data-testid="ili-marquee"
+>
+  <div class="ili-marquee__track" aria-label="{{ section.settings.phrase_1 }} {{ section.settings.phrase_2 }} {{ section.settings.phrase_3 }}">
+    <div class="ili-marquee__text" aria-hidden="false">
+      <span class="ili-marquee__sans">{{ section.settings.phrase_1 }}</span>
+      <span class="ili-marquee__sep">{{ section.settings.separator | default: '&#127807;' }}</span>
+      <span class="ili-marquee__serif">{{ section.settings.phrase_2 }}</span>
+      <span class="ili-marquee__sep">{{ section.settings.separator | default: '&#127807;' }}</span>
+      <span class="ili-marquee__sans">{{ section.settings.phrase_3 }}</span>
+      <span class="ili-marquee__sep">{{ section.settings.separator | default: '&#127807;' }}</span>
+    </div>
+    <div class="ili-marquee__text" aria-hidden="true">
+      <span class="ili-marquee__sans">{{ section.settings.phrase_1 }}</span>
+      <span class="ili-marquee__sep">{{ section.settings.separator | default: '&#127807;' }}</span>
+      <span class="ili-marquee__serif">{{ section.settings.phrase_2 }}</span>
+      <span class="ili-marquee__sep">{{ section.settings.separator | default: '&#127807;' }}</span>
+      <span class="ili-marquee__sans">{{ section.settings.phrase_3 }}</span>
+      <span class="ili-marquee__sep">{{ section.settings.separator | default: '&#127807;' }}</span>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .ili-marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    border-top: 1px solid var(--ili-border);
+    border-bottom: 1px solid var(--ili-border);
+  }
+
+  .ili-marquee__track {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    animation: ili-marquee-scroll 25s linear infinite;
+    width: max-content;
+  }
+
+  .ili-marquee__text {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .ili-marquee__sans {
+    font-size: clamp(14px, 2vw, 18px);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ili-text-primary);
+  }
+
+  .ili-marquee__serif {
+    font-size: clamp(14px, 2vw, 18px);
+    font-style: italic;
+    font-family: var(--font-heading--family);
+    color: var(--ili-text-primary);
+  }
+
+  .ili-marquee__sep {
+    color: var(--ili-sage);
+    font-size: 16px;
+  }
+
+  @keyframes ili-marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ili-marquee__track {
+      animation-play-state: paused;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Ili Marquee",
+  "tag": "section",
+  "class": "ili-marquee-section",
+  "disabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "phrase_1",
+      "label": "Phrase 1",
+      "default": "Natural Ingredients"
+    },
+    {
+      "type": "text",
+      "id": "phrase_2",
+      "label": "Phrase 2",
+      "default": "Dermatologist Approved"
+    },
+    {
+      "type": "text",
+      "id": "phrase_3",
+      "label": "Phrase 3",
+      "default": "Cruelty Free"
+    },
+    {
+      "type": "text",
+      "id": "separator",
+      "label": "Separator",
+      "default": "🌿"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ili Marquee",
+      "category": "Ili Editorial"
+    }
+  ]
+}
+{% endschema %}

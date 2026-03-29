@@ -1,37 +1,37 @@
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
-  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style kanva-newsletter"
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style ili-newsletter"
   style="{% render 'spacing-style', settings: section.settings %}"
-  data-testid="kanva-newsletter"
+  data-testid="ili-newsletter"
 >
-  <div class="kanva-newsletter__inner">
-    <div class="kanva-newsletter__content">
-      {% render 'kanva-heading',
+  <div class="ili-newsletter__inner">
+    <div class="ili-newsletter__content">
+      {% render 'ili-heading',
         label: section.settings.label,
         heading: section.settings.heading,
         subtext: section.settings.subtext,
         heading_level: 'h2'
       %}
       {%- comment -%} CRITICAL: Use 'customer' form, NOT 'contact' — native Shopify newsletter subscription {%- endcomment -%}
-      {% form 'customer', id: 'kanva-newsletter-' | append: section.id %}
+      {% form 'customer', id: 'ili-newsletter-' | append: section.id %}
         {%- if form.posted_successfully? -%}
-          <p class="kanva-newsletter__success">{{ section.settings.success_message | default: 'Thank you for subscribing!' }}</p>
+          <p class="ili-newsletter__success">{{ section.settings.success_message | default: 'Thank you for subscribing!' }}</p>
         {%- else -%}
           {%- if form.errors -%}
-            <p class="kanva-newsletter__error">{{ form.errors.translated_fields['email'] | default: 'Please enter a valid email.' }}</p>
+            <p class="ili-newsletter__error">{{ form.errors.translated_fields['email'] | default: 'Please enter a valid email.' }}</p>
           {%- endif -%}
           <input type="hidden" name="contact[tags]" value="newsletter">
-          <div class="kanva-newsletter__form">
+          <div class="ili-newsletter__form">
             <input
               type="email"
               name="contact[email]"
-              id="kanva-newsletter-email-{{ section.id }}"
+              id="ili-newsletter-email-{{ section.id }}"
               placeholder="{{ section.settings.email_placeholder | default: 'Your email address' }}"
               required
-              class="kanva-newsletter__input"
+              class="ili-newsletter__input"
               autocomplete="email"
             >
-            <button type="submit" class="kanva-newsletter__btn">
+            <button type="submit" class="ili-newsletter__btn">
               {{ section.settings.button_label | default: 'Subscribe' }}
             </button>
           </div>
@@ -40,82 +40,82 @@
     </div>
 
     {%- if section.settings.image != blank -%}
-      <div class="kanva-newsletter__image">
-        {{ section.settings.image | image_url: width: 600 | image_tag: alt: section.settings.image.alt, loading: 'lazy', class: 'kanva-newsletter__img' }}
+      <div class="ili-newsletter__image">
+        {{ section.settings.image | image_url: width: 600 | image_tag: alt: section.settings.image.alt, loading: 'lazy', class: 'ili-newsletter__img' }}
       </div>
     {%- endif -%}
   </div>
 </div>
 
 {% stylesheet %}
-  .kanva-newsletter__inner {
+  .ili-newsletter__inner {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 48px;
     align-items: center;
   }
 
-  .kanva-newsletter__form {
+  .ili-newsletter__form {
     display: flex;
     gap: 0;
     margin-top: 24px;
   }
 
-  .kanva-newsletter__input {
+  .ili-newsletter__input {
     flex: 1;
     padding: 14px 20px;
-    border: 1px solid var(--kanva-border);
-    border-radius: var(--kanva-btn-radius) 0 0 var(--kanva-btn-radius);
+    border: 1px solid var(--ili-border);
+    border-radius: var(--ili-btn-radius) 0 0 var(--ili-btn-radius);
     font-size: 15px;
     outline: none;
     background: #fff;
   }
 
-  .kanva-newsletter__input:focus {
-    border-color: var(--kanva-text-primary);
+  .ili-newsletter__input:focus {
+    border-color: var(--ili-text-primary);
   }
 
-  .kanva-newsletter__btn {
+  .ili-newsletter__btn {
     padding: 14px 28px;
-    background: var(--kanva-text-primary);
+    background: var(--ili-text-primary);
     color: #fff;
     border: 0;
-    border-radius: 0 var(--kanva-btn-radius) var(--kanva-btn-radius) 0;
+    border-radius: 0 var(--ili-btn-radius) var(--ili-btn-radius) 0;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     white-space: nowrap;
   }
 
-  .kanva-newsletter__btn:hover {
+  .ili-newsletter__btn:hover {
     opacity: 0.85;
   }
 
-  .kanva-newsletter__img {
+  .ili-newsletter__img {
     width: 100%;
-    border-radius: var(--kanva-card-radius);
+    border-radius: var(--ili-card-radius);
     object-fit: cover;
     max-height: 400px;
   }
 
-  .kanva-newsletter__success {
-    color: var(--kanva-sage);
+  .ili-newsletter__success {
+    color: var(--ili-sage);
     font-weight: 500;
     margin-top: 16px;
   }
 
-  .kanva-newsletter__error {
+  .ili-newsletter__error {
     color: #c0392b;
     font-size: 14px;
     margin-bottom: 8px;
   }
 
   @media screen and (max-width: 749px) {
-    .kanva-newsletter__inner {
+    .ili-newsletter__inner {
       grid-template-columns: 1fr;
     }
 
-    .kanva-newsletter__image {
+    .ili-newsletter__image {
       order: -1;
     }
   }
@@ -123,7 +123,7 @@
 
 {% schema %}
 {
-  "name": "Kanva Newsletter",
+  "name": "Ili Newsletter",
   "tag": "section",
   "disabled_on": {
     "groups": ["header"]
@@ -213,8 +213,8 @@
   "blocks": [],
   "presets": [
     {
-      "name": "Kanva Newsletter",
-      "category": "Kanva Editorial"
+      "name": "Ili Newsletter",
+      "category": "Ili Editorial"
     }
   ]
 }

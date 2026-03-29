@@ -1,20 +1,20 @@
 {%- doc -%}
-  Renders a Kanva pill-shaped badge/tag.
+  Renders a Ili pill-shaped badge/tag.
 
   @param {string} text - Badge text (required)
   @param {string} url - Optional URL; wraps badge in an <a> tag when provided
 {%- enddoc -%}
 
-{% if url != blank %}<a href="{{ url }}" class="kanva-badge">{{ text }}</a>
-{% else %}<span class="kanva-badge">{{ text }}</span>{% endif %}
+{% if url != blank %}<a href="{{ url }}" class="ili-badge">{{ text }}</a>
+{% else %}<span class="ili-badge">{{ text }}</span>{% endif %}
 
 <style>
-  .kanva-badge {
+  .ili-badge {
     display: inline-block;
-    background: var(--kanva-badge-bg);
-    color: var(--kanva-text-primary);
+    background: var(--ili-badge-bg);
+    color: var(--ili-text-primary);
     padding: 6px 14px;
-    border-radius: var(--kanva-pill-radius);
+    border-radius: var(--ili-pill-radius);
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.08em;

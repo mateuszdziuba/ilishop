@@ -1,0 +1,475 @@
+{%- comment -%} sections/ili-hero.liquid {%- endcomment -%}
+
+<div class="ili-hero color-{{ section.settings.color_scheme }}" data-testid="ili-hero">
+  <div class="ili-hero__slides">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'ili-slide' -%}
+        {%- assign b = block.settings -%}
+
+        {%- comment -%} Resolve media per Phase 1 responsive editor contract {%- endcomment -%}
+        {%- assign media_1 = b.media_type_1 | default: 'image' -%}
+        {%- assign media_count = 0 -%}
+        {%- if media_1 != 'none' -%}{%- assign media_count = 1 -%}{%- endif -%}
+
+        {%- if b.custom_mobile_media -%}
+          {%- if b.image_1_mobile != blank -%}
+            {%- assign media_1_mobile = 'image' -%}
+          {%- else -%}
+            {%- assign media_1_mobile = media_1 -%}
+          {%- endif -%}
+          {%- assign fallback_to_desktop = false -%}
+        {%- else -%}
+          {%- assign media_1_mobile = media_1 -%}
+          {%- assign fallback_to_desktop = true -%}
+        {%- endif -%}
+
+        {%- assign media_count_mobile = 0 -%}
+        {%- if media_1_mobile != 'none' -%}{%- assign media_count_mobile = 1 -%}{%- endif -%}
+
+        {%- if forloop.first -%}
+          {%- assign slide_fetch_priority = 'high' -%}
+        {%- else -%}
+          {%- assign slide_fetch_priority = 'auto' -%}
+        {%- endif -%}
+
+        <div class="ili-hero__slide" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+          {%- render 'ili-responsive-media',
+            media_1: media_1,
+            media_1_mobile: media_1_mobile,
+            fallback_to_desktop: fallback_to_desktop,
+            image_1: b.image_1,
+            image_1_mobile: b.image_1_mobile,
+            media_wrapper_desktop_class: 'ili-hero__bg ili-hero__bg--desktop',
+            media_wrapper_mobile_class: 'ili-hero__bg ili-hero__bg--mobile',
+            sizes: '100vw',
+            sizes_mobile: '100vw',
+            widths: '832, 1200, 1600, 1920',
+            mobile_widths: '416, 600, 800, 1200',
+            fetch_priority: slide_fetch_priority,
+            media_count: media_count,
+            media_count_mobile: media_count_mobile
+          -%}
+
+          <div class="ili-hero__content">
+            <h1 class="ili-hero__title">
+              <span class="ili-hero__title-sans">{{ b.heading_line1 }}</span>
+              <span class="ili-hero__title-serif">{{ b.heading_line2 }}</span>
+            </h1>
+            {%- if b.subtitle != blank -%}
+              <p class="ili-hero__subtitle">{{ b.subtitle }}</p>
+            {%- endif -%}
+            {%- if b.cta_label != blank -%}
+              <a href="{{ b.cta_url }}" class="ili-hero__cta">{{ b.cta_label }}</a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  {%- comment -%} Dot navigation {%- endcomment -%}
+  {%- if section.blocks.size > 1 -%}
+    <div class="ili-hero__nav">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'ili-slide' -%}
+          <button
+            class="ili-hero__dot{% if forloop.first %} active{% endif %}"
+            data-index="{{ forloop.index0 }}"
+            aria-label="Go to slide {{ forloop.index }}"
+            type="button"
+          ></button>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Product preview rail (D-03) {%- endcomment -%}
+  {%- if section.settings.show_preview_rail -%}
+    <div class="ili-hero__preview-rail">
+      <div class="ili-hero__preview-thumbs">
+        {%- if section.settings.preview_image_1 != blank -%}
+          <a href="{{ section.settings.preview_collection }}" class="ili-hero__preview-thumb">
+            {{ section.settings.preview_image_1 | image_url: width: 160 | image_tag: loading: 'lazy', class: 'ili-hero__preview-img' }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.preview_image_2 != blank -%}
+          <a href="{{ section.settings.preview_collection }}" class="ili-hero__preview-thumb">
+            {{ section.settings.preview_image_2 | image_url: width: 160 | image_tag: loading: 'lazy', class: 'ili-hero__preview-img' }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.preview_image_3 != blank -%}
+          <a href="{{ section.settings.preview_collection }}" class="ili-hero__preview-thumb">
+            {{ section.settings.preview_image_3 | image_url: width: 160 | image_tag: loading: 'lazy', class: 'ili-hero__preview-img' }}
+          </a>
+        {%- endif -%}
+      </div>
+      <a href="{{ section.settings.preview_collection }}" class="ili-hero__preview-link">View Collection</a>
+    </div>
+  {%- endif -%}
+</div>
+
+<script src="{{ 'ili-hero.js' | asset_url }}" defer></script>
+
+{% stylesheet %}
+  .ili-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 80vh;
+  }
+
+  .ili-hero__slides {
+    display: flex;
+    transition: transform 0.6s ease;
+    width: 100%;
+  }
+
+  .ili-hero__slide {
+    min-width: 100%;
+    position: relative;
+  }
+
+  .ili-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .ili-hero__bg img,
+  .ili-hero__bg video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ili-hero__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 80px 60px;
+    min-height: 80vh;
+    color: #fff;
+  }
+
+  .ili-hero__title {
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .ili-hero__title-sans {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 400;
+    display: block;
+  }
+
+  .ili-hero__title-serif {
+    font-size: clamp(36px, 5vw, 64px);
+    font-style: italic;
+    font-family: var(--font-heading--family);
+    display: block;
+  }
+
+  .ili-hero__subtitle {
+    font-size: 16px;
+    margin: 16px 0 24px;
+    max-width: 400px;
+    opacity: 0.9;
+  }
+
+  .ili-hero__cta {
+    display: inline-block;
+    padding: 14px 32px;
+    background: #fff;
+    color: var(--ili-text-primary);
+    text-decoration: none;
+    border-radius: var(--ili-btn-radius);
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ili-hero__cta:hover {
+    opacity: 0.85;
+  }
+
+  .ili-hero__nav {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    gap: 10px;
+  }
+
+  .ili-hero__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s ease;
+  }
+
+  .ili-hero__dot.active {
+    background: #fff;
+  }
+
+  .ili-hero__preview-rail {
+    position: absolute;
+    bottom: 24px;
+    right: 60px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .ili-hero__preview-thumbs {
+    display: flex;
+    gap: 8px;
+  }
+
+  .ili-hero__preview-thumb {
+    display: block;
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .ili-hero__preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ili-hero__preview-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    opacity: 0.9;
+  }
+
+  .ili-hero__preview-link:hover {
+    opacity: 1;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ili-hero__content {
+      padding: 40px 24px;
+    }
+
+    .ili-hero__preview-rail {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Ili Hero",
+  "tag": "section",
+  "class": "ili-hero-section",
+  "disabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-6"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        { "value": "full-width", "label": "Full width" },
+        { "value": "page-width", "label": "Page width" }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "header",
+      "content": "Product Preview Rail"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_preview_rail",
+      "label": "Show preview rail",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "preview_collection",
+      "label": "Preview collection link",
+      "default": "shopify://collections/all"
+    },
+    {
+      "type": "image_picker",
+      "id": "preview_image_1",
+      "label": "Preview image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "preview_image_2",
+      "label": "Preview image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "preview_image_3",
+      "label": "Preview image 3"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ili-slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Media"
+        },
+        {
+          "type": "select",
+          "id": "media_type_1",
+          "label": "Media type",
+          "options": [
+            { "value": "image", "label": "Image" },
+            { "value": "video", "label": "Video" }
+          ],
+          "default": "image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1",
+          "label": "Desktop image"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_mobile_media",
+          "label": "Use custom mobile image",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1_mobile",
+          "label": "Mobile image"
+        },
+        {
+          "type": "header",
+          "content": "Content"
+        },
+        {
+          "type": "text",
+          "id": "heading_line1",
+          "label": "Heading line 1",
+          "default": "Natural"
+        },
+        {
+          "type": "text",
+          "id": "heading_line2",
+          "label": "Heading line 2 (italic)",
+          "default": "Skincare"
+        },
+        {
+          "type": "textarea",
+          "id": "subtitle",
+          "label": "Subtitle"
+        },
+        {
+          "type": "text",
+          "id": "cta_label",
+          "label": "Button label",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "cta_url",
+          "label": "Button link",
+          "default": "shopify://collections/all"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "Ili Hero",
+      "category": "Ili Editorial",
+      "blocks": [
+        {
+          "type": "ili-slide",
+          "settings": {
+            "heading_line1": "Natural",
+            "heading_line2": "Skincare",
+            "subtitle": "Start your day with gentle care and nourishing ingredients.",
+            "cta_label": "Shop Now",
+            "cta_url": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "ili-slide",
+          "settings": {
+            "heading_line1": "Pure",
+            "heading_line2": "Ingredients",
+            "subtitle": "Ethically sourced botanicals for radiant skin.",
+            "cta_label": "Explore",
+            "cta_url": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "ili-slide",
+          "settings": {
+            "heading_line1": "Gentle",
+            "heading_line2": "Formulas",
+            "subtitle": "Dermatologist-tested care for every skin type.",
+            "cta_label": "Discover",
+            "cta_url": "shopify://collections/all"
+          }
+        }
+      ],
+      "settings": {
+        "color_scheme": "scheme-6",
+        "section_width": "full-width",
+        "show_preview_rail": true,
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    }
+  ]
+}
+{% endschema %}

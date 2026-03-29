@@ -1,30 +1,30 @@
-{%- comment -%} sections/kanva-testimonial.liquid {%- endcomment -%}
+{%- comment -%} sections/ili-testimonial.liquid {%- endcomment -%}
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
-  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style kanva-testimonial"
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style ili-testimonial"
   style="{% render 'spacing-style', settings: section.settings %}"
-  data-testid="kanva-testimonial"
+  data-testid="ili-testimonial"
 >
   {%- if section.settings.label != blank or section.settings.heading != blank -%}
-    {%- render 'kanva-heading', label: section.settings.label, heading: section.settings.heading, alignment: 'center' -%}
+    {%- render 'ili-heading', label: section.settings.label, heading: section.settings.heading, alignment: 'center' -%}
   {%- endif -%}
 
-  <div class="kanva-testimonial__content">
+  <div class="ili-testimonial__content">
     {%- for block in section.blocks -%}
-      {%- if block.type == 'kanva-testimonial-quote' -%}
-        <div class="kanva-testimonial__quote-block" {{ block.shopify_attributes }}>
-          <div class="kanva-testimonial__stars" aria-label="{{ block.settings.stars }} out of 5 stars">
+      {%- if block.type == 'ili-testimonial-quote' -%}
+        <div class="ili-testimonial__quote-block" {{ block.shopify_attributes }}>
+          <div class="ili-testimonial__stars" aria-label="{{ block.settings.stars }} out of 5 stars">
             {%- for i in (1..block.settings.stars) -%}&#9733;{%- endfor -%}
           </div>
-          <blockquote class="kanva-testimonial__quote">
+          <blockquote class="ili-testimonial__quote">
             {{ block.settings.quote }}
           </blockquote>
           {%- if block.settings.author != blank -%}
-            <cite class="kanva-testimonial__author">{{ block.settings.author }}</cite>
+            <cite class="ili-testimonial__author">{{ block.settings.author }}</cite>
           {%- endif -%}
           {%- if block.settings.rating_summary != blank -%}
-            <div class="kanva-testimonial__rating-summary">{{ block.settings.rating_summary }}</div>
+            <div class="ili-testimonial__rating-summary">{{ block.settings.rating_summary }}</div>
           {%- endif -%}
         </div>
       {%- endif -%}
@@ -33,48 +33,48 @@
 </div>
 
 {% stylesheet %}
-  .kanva-testimonial__content {
+  .ili-testimonial__content {
     text-align: center;
     max-width: 720px;
     margin: 0 auto;
   }
 
-  .kanva-testimonial__stars {
+  .ili-testimonial__stars {
     font-size: 24px;
-    color: var(--kanva-sage);
+    color: var(--ili-sage);
     margin-bottom: 24px;
     letter-spacing: 4px;
   }
 
-  .kanva-testimonial__quote {
+  .ili-testimonial__quote {
     font-size: clamp(20px, 3vw, 28px);
     font-weight: 400;
     line-height: 1.5;
-    color: var(--kanva-text-primary);
+    color: var(--ili-text-primary);
     font-style: normal;
     margin: 0 0 24px;
     padding: 0;
     border: 0;
   }
 
-  .kanva-testimonial__author {
+  .ili-testimonial__author {
     font-size: 14px;
     font-weight: 500;
-    color: var(--kanva-text-primary);
+    color: var(--ili-text-primary);
     display: block;
     margin-bottom: 8px;
     font-style: normal;
   }
 
-  .kanva-testimonial__rating-summary {
+  .ili-testimonial__rating-summary {
     font-size: 13px;
-    color: var(--kanva-text-muted);
+    color: var(--ili-text-muted);
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Kanva Testimonial",
+  "name": "Ili Testimonial",
   "tag": "section",
   "disabled_on": {
     "groups": ["header"]
@@ -133,7 +133,7 @@
   ],
   "blocks": [
     {
-      "type": "kanva-testimonial-quote",
+      "type": "ili-testimonial-quote",
       "name": "Quote",
       "settings": [
         {
@@ -166,13 +166,13 @@
   ],
   "presets": [
     {
-      "name": "Kanva Testimonial",
-      "category": "Kanva Editorial",
+      "name": "Ili Testimonial",
+      "category": "Ili Editorial",
       "blocks": [
         {
-          "type": "kanva-testimonial-quote",
+          "type": "ili-testimonial-quote",
           "settings": {
-            "quote": "I\u2019ve tried dozens of skincare brands and nothing has transformed my skin like Kanva. My skin is clearer, softer, and genuinely glowing.",
+            "quote": "I\u2019ve tried dozens of skincare brands and nothing has transformed my skin like Ili. My skin is clearer, softer, and genuinely glowing.",
             "author": "Jennifer K., Verified Buyer",
             "stars": 5,
             "rating_summary": "4.7 / 5 \u00b7 1,109 reviews"

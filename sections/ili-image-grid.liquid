@@ -1,26 +1,26 @@
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
-  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style kanva-image-grid"
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style ili-image-grid"
   style="{% render 'spacing-style', settings: section.settings %}"
-  data-testid="kanva-image-grid"
+  data-testid="ili-image-grid"
 >
-  <div class="kanva-image-grid__header">
-    <div class="kanva-image-grid__heading">
-      {% render 'kanva-heading', label: section.settings.label, heading: section.settings.heading %}
+  <div class="ili-image-grid__header">
+    <div class="ili-image-grid__heading">
+      {% render 'ili-heading', label: section.settings.label, heading: section.settings.heading %}
     </div>
     {%- if section.settings.link_text != blank -%}
-      <a href="{{ section.settings.link_url }}" class="kanva-image-grid__link">{{ section.settings.link_text }}</a>
+      <a href="{{ section.settings.link_url }}" class="ili-image-grid__link">{{ section.settings.link_text }}</a>
     {%- endif -%}
   </div>
 
-  <div class="kanva-image-grid__grid">
-    {%- comment -%} Each kanva-image-grid-item block renders via blocks/kanva-image-grid-item.liquid using: render 'kanva-card' {%- endcomment -%}
+  <div class="ili-image-grid__grid">
+    {%- comment -%} Each ili-image-grid-item block renders via blocks/ili-image-grid-item.liquid using: render 'ili-card' {%- endcomment -%}
     {%- content_for 'blocks' -%}
   </div>
 </div>
 
 {% stylesheet %}
-  .kanva-image-grid__header {
+  .ili-image-grid__header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -29,36 +29,36 @@
     gap: 16px;
   }
 
-  .kanva-image-grid__link {
+  .ili-image-grid__link {
     font-size: 14px;
     font-weight: 500;
-    color: var(--kanva-text-primary);
+    color: var(--ili-text-primary);
     text-decoration: none;
     border-bottom: 1px solid currentColor;
   }
 
-  .kanva-image-grid__link:hover {
+  .ili-image-grid__link:hover {
     opacity: 0.7;
   }
 
-  .kanva-image-grid__grid {
+  .ili-image-grid__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 4px;
   }
 
-  .kanva-image-grid__item {
+  .ili-image-grid__item {
     aspect-ratio: 1 / 1;
   }
 
   @media screen and (max-width: 749px) {
-    .kanva-image-grid__grid {
+    .ili-image-grid__grid {
       grid-template-columns: repeat(3, 1fr);
     }
   }
 
   @media screen and (max-width: 449px) {
-    .kanva-image-grid__grid {
+    .ili-image-grid__grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
@@ -66,7 +66,7 @@
 
 {% schema %}
 {
-  "name": "Kanva Image Grid",
+  "name": "Ili Image Grid",
   "tag": "section",
   "disabled_on": {
     "groups": ["header"]
@@ -103,7 +103,7 @@
       "type": "text",
       "id": "link_text",
       "label": "Link text",
-      "default": "@kanva"
+      "default": "@ili"
     },
     {
       "type": "url",
@@ -137,21 +137,21 @@
   ],
   "blocks": [
     {
-      "type": "kanva-image-grid-item",
+      "type": "ili-image-grid-item",
       "name": "Image"
     }
   ],
   "presets": [
     {
-      "name": "Kanva Image Grid",
-      "category": "Kanva Editorial",
+      "name": "Ili Image Grid",
+      "category": "Ili Editorial",
       "blocks": [
-        { "type": "kanva-image-grid-item" },
-        { "type": "kanva-image-grid-item" },
-        { "type": "kanva-image-grid-item" },
-        { "type": "kanva-image-grid-item" },
-        { "type": "kanva-image-grid-item" },
-        { "type": "kanva-image-grid-item" }
+        { "type": "ili-image-grid-item" },
+        { "type": "ili-image-grid-item" },
+        { "type": "ili-image-grid-item" },
+        { "type": "ili-image-grid-item" },
+        { "type": "ili-image-grid-item" },
+        { "type": "ili-image-grid-item" }
       ]
     }
   ]

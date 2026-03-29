@@ -1,20 +1,20 @@
-{%- comment -%} sections/kanva-feature-strip.liquid {%- endcomment -%}
+{%- comment -%} sections/ili-feature-strip.liquid {%- endcomment -%}
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
-  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style kanva-feature-strip"
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style ili-feature-strip"
   style="{% render 'spacing-style', settings: section.settings %}"
-  data-testid="kanva-feature-strip"
+  data-testid="ili-feature-strip"
 >
   {%- if section.settings.label != blank or section.settings.heading != blank -%}
-    {%- render 'kanva-heading', label: section.settings.label, heading: section.settings.heading, alignment: 'center' -%}
+    {%- render 'ili-heading', label: section.settings.label, heading: section.settings.heading, alignment: 'center' -%}
   {%- endif -%}
 
-  <div class="kanva-feature-strip__grid">
+  <div class="ili-feature-strip__grid">
     {%- for block in section.blocks -%}
-      {%- if block.type == 'kanva-feature-item' -%}
-        <div class="kanva-feature-strip__item" {{ block.shopify_attributes }}>
-          <div class="kanva-feature-strip__icon">
+      {%- if block.type == 'ili-feature-item' -%}
+        <div class="ili-feature-strip__item" {{ block.shopify_attributes }}>
+          <div class="ili-feature-strip__icon">
             {%- case block.settings.icon -%}
               {%- when 'natural' -%}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4z"/></svg>
@@ -30,8 +30,8 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             {%- endcase -%}
           </div>
-          <div class="kanva-feature-strip__title">{{ block.settings.title }}</div>
-          <div class="kanva-feature-strip__desc">{{ block.settings.description }}</div>
+          <div class="ili-feature-strip__title">{{ block.settings.title }}</div>
+          <div class="ili-feature-strip__desc">{{ block.settings.description }}</div>
         </div>
       {%- endif -%}
     {%- endfor -%}
@@ -39,7 +39,7 @@
 </div>
 
 {% stylesheet %}
-  .kanva-feature-strip__grid {
+  .ili-feature-strip__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 32px;
@@ -47,28 +47,28 @@
     padding-top: 32px;
   }
 
-  .kanva-feature-strip__icon svg {
+  .ili-feature-strip__icon svg {
     width: 32px;
     height: 32px;
-    stroke: var(--kanva-text-primary);
+    stroke: var(--ili-text-primary);
     margin-bottom: 12px;
   }
 
-  .kanva-feature-strip__title {
+  .ili-feature-strip__title {
     font-size: 16px;
     font-weight: 500;
-    color: var(--kanva-text-primary);
+    color: var(--ili-text-primary);
     margin-bottom: 4px;
   }
 
-  .kanva-feature-strip__desc {
+  .ili-feature-strip__desc {
     font-size: 14px;
-    color: var(--kanva-text-muted);
+    color: var(--ili-text-muted);
     line-height: 1.5;
   }
 
   @media screen and (max-width: 749px) {
-    .kanva-feature-strip__grid {
+    .ili-feature-strip__grid {
       grid-template-columns: repeat(2, 1fr);
       gap: 24px;
     }
@@ -77,7 +77,7 @@
 
 {% schema %}
 {
-  "name": "Kanva Feature Strip",
+  "name": "Ili Feature Strip",
   "tag": "section",
   "disabled_on": {
     "groups": ["header"]
@@ -136,7 +136,7 @@
   ],
   "blocks": [
     {
-      "type": "kanva-feature-item",
+      "type": "ili-feature-item",
       "name": "Feature item",
       "settings": [
         {
@@ -170,11 +170,11 @@
   ],
   "presets": [
     {
-      "name": "Kanva Feature Strip",
-      "category": "Kanva Editorial",
+      "name": "Ili Feature Strip",
+      "category": "Ili Editorial",
       "blocks": [
         {
-          "type": "kanva-feature-item",
+          "type": "ili-feature-item",
           "settings": {
             "icon": "natural",
             "title": "Natural Formula",
@@ -182,7 +182,7 @@
           }
         },
         {
-          "type": "kanva-feature-item",
+          "type": "ili-feature-item",
           "settings": {
             "icon": "shield",
             "title": "Cruelty-Free",
@@ -190,7 +190,7 @@
           }
         },
         {
-          "type": "kanva-feature-item",
+          "type": "ili-feature-item",
           "settings": {
             "icon": "checkmark",
             "title": "Expert Approved",
@@ -198,7 +198,7 @@
           }
         },
         {
-          "type": "kanva-feature-item",
+          "type": "ili-feature-item",
           "settings": {
             "icon": "shipping",
             "title": "Free Shipping",
