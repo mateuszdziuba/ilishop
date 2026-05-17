@@ -1,19 +1,101 @@
 {%- doc -%}
   Renders a single image grid item for the ili-image-grid section.
-  Uses the shared ili-card snippet for consistent Ili card treatment.
 
   @param {image} image - The grid item image
   @param {string} alt - The image alt text
   @param {string} url - Optional link URL for the grid item
+  @param {string} caption - Optional hover caption overlay
 {%- enddoc -%}
 
-<div class="ili-image-grid__item" {{ block.shopify_attributes }}>
-  {% render 'ili-card',
-    image: block.settings.image,
-    image_alt: block.settings.alt,
-    url: block.settings.url
-  %}
+<div class="ili-image-grid__item{% if block.settings.caption != blank or block.settings.hover_label != blank %} ili-image-grid__item--has-hover{% endif %}" {{ block.shopify_attributes }}>
+  {%- if block.settings.url != blank -%}<a href="{{ block.settings.url }}" class="ili-image-grid__item-link" aria-label="{{ block.settings.alt | escape }}">{%- endif -%}
+
+  {%- if block.settings.image != blank -%}
+    {{ block.settings.image | image_url: width: 600 | image_tag:
+      alt: block.settings.alt,
+      loading: 'lazy',
+      class: 'ili-image-grid__img',
+      sizes: '(max-width: 449px) 50vw, (max-width: 749px) 33vw, 20vw'
+    }}
+  {%- else -%}
+    {{ 'image' | placeholder_svg_tag: 'ili-image-grid__img ili-image-grid__placeholder' }}
+  {%- endif -%}
+
+  {%- if block.settings.hover_label != blank -%}
+    <div class="ili-image-grid__hover-overlay" aria-hidden="true">
+      <span class="ili-image-grid__hover-label">{{ block.settings.hover_label }}</span>
+    </div>
+  {%- endif -%}
+
+  {%- if block.settings.url != blank -%}</a>{%- endif -%}
+
+  {%- if block.settings.caption != blank -%}
+    <p class="ili-image-grid__caption">{{ block.settings.caption }}</p>
+  {%- endif -%}
 </div>
+
+{% stylesheet %}
+  .ili-image-grid__item {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    position: relative;
+    border-radius: 4px;
+  }
+
+  .ili-image-grid__item-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+  }
+
+  .ili-image-grid__img,
+  .ili-image-grid__placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .ili-image-grid__item:hover .ili-image-grid__img {
+    transform: scale(1.06);
+  }
+
+  .ili-image-grid__hover-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .ili-image-grid__item:hover .ili-image-grid__hover-overlay {
+    opacity: 1;
+  }
+
+  .ili-image-grid__hover-label {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0 12px;
+  }
+
+  .ili-image-grid__caption {
+    font-size: 12px;
+    color: var(--ili-text-muted, #6B6B6B);
+    text-align: center;
+    margin: 8px 0 0;
+    line-height: 1.4;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -25,14 +107,25 @@
       "label": "Image"
     },
     {
-      "type": "url",
-      "id": "url",
-      "label": "Link"
-    },
-    {
       "type": "text",
       "id": "alt",
       "label": "Alt text"
+    },
+    {
+      "type": "text",
+      "id": "hover_label",
+      "label": "Hover overlay text",
+      "info": "Text shown on hover"
+    },
+    {
+      "type": "text",
+      "id": "caption",
+      "label": "Caption (below image)"
+    },
+    {
+      "type": "url",
+      "id": "url",
+      "label": "Link"
     }
   ]
 }

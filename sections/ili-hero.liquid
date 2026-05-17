@@ -1,12 +1,29 @@
 {%- comment -%} sections/ili-hero.liquid {%- endcomment -%}
 
-<div class="ili-hero color-{{ section.settings.color_scheme }}" data-testid="ili-hero">
-  <div class="ili-hero__slides">
+{%- liquid
+  assign slide_count = 0
+  for block in section.blocks
+    if block.type == 'ili-slide'
+      assign slide_count = slide_count | plus: 1
+    endif
+  endfor
+
+  assign autoplay = section.settings.autoplay
+  assign autoplay_speed = section.settings.autoplay_speed | default: 5000
+  assign min_height = section.settings.min_height | default: 80
+-%}
+
+<div
+  class="ili-hero color-{{ section.settings.color_scheme }}"
+  data-testid="ili-hero"
+  data-autoplay="{{ autoplay }}"
+  data-autoplay-speed="{{ autoplay_speed }}"
+>
+  <div class="ili-hero__slides" aria-live="polite">
     {%- for block in section.blocks -%}
       {%- if block.type == 'ili-slide' -%}
         {%- assign b = block.settings -%}
 
-        {%- comment -%} Resolve media per Phase 1 responsive editor contract {%- endcomment -%}
         {%- assign media_1 = b.media_type_1 | default: 'image' -%}
         {%- assign media_count = 0 -%}
         {%- if media_1 != 'none' -%}{%- assign media_count = 1 -%}{%- endif -%}
@@ -32,7 +49,20 @@
           {%- assign slide_fetch_priority = 'auto' -%}
         {%- endif -%}
 
-        <div class="ili-hero__slide" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+        {%- assign content_h = b.content_position_v | default: 'bottom' -%}
+        {%- assign content_align = b.content_position_h | default: 'left' -%}
+        {%- assign text_color = b.text_color | default: '#ffffff' -%}
+        {%- assign overlay_opacity_pct = b.overlay_opacity | default: 35 -%}
+        {%- assign overlay_opacity_dec = overlay_opacity_pct | divided_by: 100.0 -%}
+        {%- assign overlay_base = b.overlay_color | default: '#000000' -%}
+        {%- assign overlay_css = overlay_base | color_modify: 'alpha', overlay_opacity_dec -%}
+
+        <div
+          class="ili-hero__slide"
+          data-index="{{ forloop.index0 }}"
+          aria-label="Slide {{ forloop.index }} of {{ slide_count }}"
+          {{ block.shopify_attributes }}
+        >
           {%- render 'ili-responsive-media',
             media_1: media_1,
             media_1_mobile: media_1_mobile,
@@ -50,60 +80,106 @@
             media_count_mobile: media_count_mobile
           -%}
 
-          <div class="ili-hero__content">
-            <h1 class="ili-hero__title">
-              <span class="ili-hero__title-sans">{{ b.heading_line1 }}</span>
-              <span class="ili-hero__title-serif">{{ b.heading_line2 }}</span>
-            </h1>
-            {%- if b.subtitle != blank -%}
-              <p class="ili-hero__subtitle">{{ b.subtitle }}</p>
-            {%- endif -%}
-            {%- if b.cta_label != blank -%}
-              <a href="{{ b.cta_url }}" class="ili-hero__cta">{{ b.cta_label }}</a>
-            {%- endif -%}
+          {%- comment -%} Gradient overlay {%- endcomment -%}
+          {%- if b.show_overlay -%}
+            <div class="ili-hero__overlay" style="background: {{ overlay_css }};"></div>
+          {%- endif -%}
+
+          <div
+            class="ili-hero__content ili-hero__content--{{ content_h }} ili-hero__content--align-{{ content_align }}"
+            style="color: {{ text_color }}; min-height: {{ min_height }}vh;"
+          >
+            <div class="ili-hero__content-inner">
+              {%- if b.eyebrow != blank -%}
+                <p class="ili-hero__eyebrow">{{ b.eyebrow }}</p>
+              {%- endif -%}
+
+              <h1 class="ili-hero__title">
+                <span class="ili-hero__title-sans">{{ b.heading_line1 }}</span>
+                {%- if b.heading_line2 != blank -%}
+                  <span class="ili-hero__title-serif">{{ b.heading_line2 }}</span>
+                {%- endif -%}
+              </h1>
+
+              {%- if b.subtitle != blank -%}
+                <p class="ili-hero__subtitle">{{ b.subtitle }}</p>
+              {%- endif -%}
+
+              {%- if b.cta_label != blank or b.cta_label_2 != blank -%}
+                <div class="ili-hero__ctas">
+                  {%- if b.cta_label != blank -%}
+                    <a href="{{ b.cta_url }}" class="ili-hero__cta ili-hero__cta--primary">
+                      {{ b.cta_label }}
+                    </a>
+                  {%- endif -%}
+                  {%- if b.cta_label_2 != blank -%}
+                    <a href="{{ b.cta_url_2 }}" class="ili-hero__cta ili-hero__cta--secondary">
+                      {{ b.cta_label_2 }}
+                    </a>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            </div>
           </div>
         </div>
       {%- endif -%}
     {%- endfor -%}
   </div>
 
+  {%- comment -%} Arrow navigation {%- endcomment -%}
+  {%- if slide_count > 1 and section.settings.show_arrows -%}
+    <button class="ili-hero__arrow ili-hero__arrow--prev" aria-label="Previous slide" type="button">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button class="ili-hero__arrow ili-hero__arrow--next" aria-label="Next slide" type="button">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  {%- endif -%}
+
   {%- comment -%} Dot navigation {%- endcomment -%}
-  {%- if section.blocks.size > 1 -%}
-    <div class="ili-hero__nav">
+  {%- if slide_count > 1 -%}
+    <div class="ili-hero__nav" role="tablist" aria-label="Slide navigation">
+      {%- assign dot_idx = 0 -%}
       {%- for block in section.blocks -%}
         {%- if block.type == 'ili-slide' -%}
           <button
             class="ili-hero__dot{% if forloop.first %} active{% endif %}"
-            data-index="{{ forloop.index0 }}"
-            aria-label="Go to slide {{ forloop.index }}"
+            data-index="{{ dot_idx }}"
+            role="tab"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            aria-label="Go to slide {{ dot_idx | plus: 1 }}"
             type="button"
           ></button>
+          {%- assign dot_idx = dot_idx | plus: 1 -%}
         {%- endif -%}
       {%- endfor -%}
     </div>
   {%- endif -%}
 
-  {%- comment -%} Product preview rail (D-03) {%- endcomment -%}
+  {%- comment -%} Product preview rail {%- endcomment -%}
   {%- if section.settings.show_preview_rail -%}
     <div class="ili-hero__preview-rail">
       <div class="ili-hero__preview-thumbs">
         {%- if section.settings.preview_image_1 != blank -%}
-          <a href="{{ section.settings.preview_collection }}" class="ili-hero__preview-thumb">
-            {{ section.settings.preview_image_1 | image_url: width: 160 | image_tag: loading: 'lazy', class: 'ili-hero__preview-img' }}
+          <a href="{{ section.settings.preview_collection }}" class="ili-hero__preview-thumb" aria-label="{{ section.settings.preview_link_label | default: 'View Collection' }}">
+            {{ section.settings.preview_image_1 | image_url: width: 160 | image_tag: loading: 'lazy', class: 'ili-hero__preview-img', alt: '' }}
           </a>
         {%- endif -%}
         {%- if section.settings.preview_image_2 != blank -%}
-          <a href="{{ section.settings.preview_collection }}" class="ili-hero__preview-thumb">
-            {{ section.settings.preview_image_2 | image_url: width: 160 | image_tag: loading: 'lazy', class: 'ili-hero__preview-img' }}
+          <a href="{{ section.settings.preview_collection }}" class="ili-hero__preview-thumb" aria-label="{{ section.settings.preview_link_label | default: 'View Collection' }}">
+            {{ section.settings.preview_image_2 | image_url: width: 160 | image_tag: loading: 'lazy', class: 'ili-hero__preview-img', alt: '' }}
           </a>
         {%- endif -%}
         {%- if section.settings.preview_image_3 != blank -%}
-          <a href="{{ section.settings.preview_collection }}" class="ili-hero__preview-thumb">
-            {{ section.settings.preview_image_3 | image_url: width: 160 | image_tag: loading: 'lazy', class: 'ili-hero__preview-img' }}
+          <a href="{{ section.settings.preview_collection }}" class="ili-hero__preview-thumb" aria-label="{{ section.settings.preview_link_label | default: 'View Collection' }}">
+            {{ section.settings.preview_image_3 | image_url: width: 160 | image_tag: loading: 'lazy', class: 'ili-hero__preview-img', alt: '' }}
           </a>
         {%- endif -%}
       </div>
-      <a href="{{ section.settings.preview_collection }}" class="ili-hero__preview-link">View Collection</a>
+      <a href="{{ section.settings.preview_collection }}" class="ili-hero__preview-link">
+        {{ section.settings.preview_link_label | default: 'View Collection' }}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
     </div>
   {%- endif -%}
 </div>
@@ -114,12 +190,11 @@
   .ili-hero {
     position: relative;
     overflow: hidden;
-    min-height: 80vh;
   }
 
   .ili-hero__slides {
     display: flex;
-    transition: transform 0.6s ease;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
   }
 
@@ -128,10 +203,15 @@
     position: relative;
   }
 
-  .ili-hero__bg {
+  .ili-hero__bg,
+  .ili-hero__overlay {
     position: absolute;
     inset: 0;
     z-index: 0;
+  }
+
+  .ili-hero__overlay {
+    z-index: 1;
   }
 
   .ili-hero__bg img,
@@ -143,87 +223,188 @@
 
   .ili-hero__content {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-start;
-    padding: 80px 60px;
-    min-height: 80vh;
-    color: #fff;
+    padding: clamp(40px, 6vw, 100px) clamp(24px, 5vw, 80px);
+  }
+
+  .ili-hero__content--bottom { justify-content: flex-end; }
+  .ili-hero__content--middle { justify-content: center; }
+  .ili-hero__content--top { justify-content: flex-start; padding-top: clamp(80px, 10vw, 140px); }
+
+  .ili-hero__content--align-left  { align-items: flex-start; text-align: left; }
+  .ili-hero__content--align-center { align-items: center; text-align: center; }
+  .ili-hero__content--align-right { align-items: flex-end; text-align: right; }
+
+  .ili-hero__content-inner {
+    max-width: 680px;
+    animation: ili-hero-fade-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  .ili-hero__content--align-center .ili-hero__content-inner {
+    max-width: 720px;
+  }
+
+  @keyframes ili-hero-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .ili-hero__eyebrow {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin: 0 0 16px;
   }
 
   .ili-hero__title {
     margin: 0;
-    line-height: 1.1;
+    line-height: 1.08;
   }
 
   .ili-hero__title-sans {
-    font-size: clamp(36px, 5vw, 64px);
+    font-size: clamp(40px, 5.5vw, 80px);
     font-weight: 400;
     display: block;
+    letter-spacing: -0.01em;
   }
 
   .ili-hero__title-serif {
-    font-size: clamp(36px, 5vw, 64px);
+    font-size: clamp(40px, 5.5vw, 80px);
     font-style: italic;
     font-family: var(--font-heading--family);
     display: block;
+    letter-spacing: -0.01em;
   }
 
   .ili-hero__subtitle {
-    font-size: 16px;
-    margin: 16px 0 24px;
-    max-width: 400px;
-    opacity: 0.9;
+    font-size: clamp(15px, 1.5vw, 18px);
+    margin: 20px 0 32px;
+    max-width: 480px;
+    opacity: 0.88;
+    line-height: 1.6;
+  }
+
+  .ili-hero__content--align-center .ili-hero__subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .ili-hero__ctas {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .ili-hero__content--align-center .ili-hero__ctas {
+    justify-content: center;
   }
 
   .ili-hero__cta {
-    display: inline-block;
-    padding: 14px 32px;
-    background: #fff;
-    color: var(--ili-text-primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 36px;
     text-decoration: none;
     border-radius: var(--ili-btn-radius);
     font-size: 14px;
-    letter-spacing: 0.05em;
+    font-weight: 500;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    cursor: pointer;
+  }
+
+  .ili-hero__cta--primary {
+    background: #fff;
+    color: var(--ili-text-primary);
+  }
+
+  .ili-hero__cta--secondary {
+    background: transparent;
+    color: currentColor;
+    border: 1.5px solid rgba(255,255,255,0.6);
   }
 
   .ili-hero__cta:hover {
     opacity: 0.85;
+    transform: translateY(-2px);
   }
 
+  /* Arrow navigation */
+  .ili-hero__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .ili-hero__arrow:hover {
+    background: rgba(255,255,255,0.25);
+    border-color: rgba(255,255,255,0.8);
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .ili-hero__arrow--prev { left: 24px; }
+  .ili-hero__arrow--next { right: 24px; }
+
+  /* Dot nav */
   .ili-hero__nav {
     position: absolute;
-    bottom: 24px;
+    bottom: 28px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
+    z-index: 3;
     display: flex;
-    gap: 10px;
+    gap: 8px;
+    align-items: center;
   }
 
   .ili-hero__dot {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    border: 2px solid #fff;
+    border: 1.5px solid rgba(255,255,255,0.7);
     background: transparent;
     cursor: pointer;
     padding: 0;
-    transition: background 0.2s ease;
+    transition: background 0.25s ease, transform 0.25s ease, width 0.25s ease;
   }
 
   .ili-hero__dot.active {
     background: #fff;
+    border-color: #fff;
+    width: 24px;
+    border-radius: 4px;
   }
 
+  /* Preview rail */
   .ili-hero__preview-rail {
     position: absolute;
-    bottom: 24px;
-    right: 60px;
-    z-index: 2;
+    bottom: 28px;
+    right: clamp(24px, 4vw, 60px);
+    z-index: 3;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -231,16 +412,22 @@
 
   .ili-hero__preview-thumbs {
     display: flex;
-    gap: 8px;
+    gap: 6px;
   }
 
   .ili-hero__preview-thumb {
     display: block;
-    width: 64px;
-    height: 64px;
+    width: 56px;
+    height: 56px;
     border-radius: 8px;
     overflow: hidden;
-    border: 2px solid rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255,255,255,0.4);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .ili-hero__preview-thumb:hover {
+    border-color: rgba(255,255,255,0.9);
+    transform: scale(1.05);
   }
 
   .ili-hero__preview-img {
@@ -253,9 +440,14 @@
     color: #fff;
     text-decoration: none;
     font-size: 13px;
+    font-weight: 500;
     letter-spacing: 0.04em;
     white-space: nowrap;
-    opacity: 0.9;
+    opacity: 0.88;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s ease;
   }
 
   .ili-hero__preview-link:hover {
@@ -264,11 +456,28 @@
 
   @media screen and (max-width: 749px) {
     .ili-hero__content {
-      padding: 40px 24px;
+      padding: 40px 20px;
     }
 
     .ili-hero__preview-rail {
       display: none;
+    }
+
+    .ili-hero__arrow {
+      width: 40px;
+      height: 40px;
+    }
+
+    .ili-hero__arrow--prev { left: 12px; }
+    .ili-hero__arrow--next { right: 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ili-hero__content-inner {
+      animation: none;
+    }
+    .ili-hero__slides {
+      transition: none;
     }
   }
 {% endstylesheet %}
@@ -299,6 +508,43 @@
       "default": "full-width"
     },
     {
+      "type": "range",
+      "id": "min_height",
+      "label": "Minimum height",
+      "info": "Percentage of viewport height",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Slideshow"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Auto-play",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Auto-play speed",
+      "min": 2000,
+      "max": 10000,
+      "step": 500,
+      "unit": "ms",
+      "default": 5000
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show arrow navigation",
+      "default": true
+    },
+    {
       "type": "header",
       "content": "Product Preview Rail"
     },
@@ -313,6 +559,12 @@
       "id": "preview_collection",
       "label": "Preview collection link",
       "default": "shopify://collections/all"
+    },
+    {
+      "type": "text",
+      "id": "preview_link_label",
+      "label": "Preview link label",
+      "default": "View Collection"
     },
     {
       "type": "image_picker",
@@ -387,11 +639,71 @@
         {
           "type": "image_picker",
           "id": "image_1_mobile",
-          "label": "Mobile image"
+          "label": "Mobile image",
+          "visible_if": "{{ block.settings.custom_mobile_media == true }}"
+        },
+        {
+          "type": "header",
+          "content": "Overlay"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_overlay",
+          "label": "Show image overlay",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "Overlay color",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "Overlay opacity",
+          "min": 0,
+          "max": 90,
+          "step": 5,
+          "unit": "%",
+          "default": 35
         },
         {
           "type": "header",
           "content": "Content"
+        },
+        {
+          "type": "select",
+          "id": "content_position_v",
+          "label": "Vertical position",
+          "options": [
+            { "value": "top", "label": "Top" },
+            { "value": "middle", "label": "Middle" },
+            { "value": "bottom", "label": "Bottom" }
+          ],
+          "default": "bottom"
+        },
+        {
+          "type": "select",
+          "id": "content_position_h",
+          "label": "Horizontal alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow label"
         },
         {
           "type": "text",
@@ -411,6 +723,10 @@
           "label": "Subtitle"
         },
         {
+          "type": "header",
+          "content": "Primary button"
+        },
+        {
           "type": "text",
           "id": "cta_label",
           "label": "Button label",
@@ -421,6 +737,20 @@
           "id": "cta_url",
           "label": "Button link",
           "default": "shopify://collections/all"
+        },
+        {
+          "type": "header",
+          "content": "Secondary button"
+        },
+        {
+          "type": "text",
+          "id": "cta_label_2",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "cta_url_2",
+          "label": "Button link"
         }
       ]
     }
@@ -438,7 +768,9 @@
             "heading_line2": "Skincare",
             "subtitle": "Start your day with gentle care and nourishing ingredients.",
             "cta_label": "Shop Now",
-            "cta_url": "shopify://collections/all"
+            "cta_url": "shopify://collections/all",
+            "show_overlay": true,
+            "overlay_opacity": 35
           }
         },
         {
@@ -448,7 +780,9 @@
             "heading_line2": "Ingredients",
             "subtitle": "Ethically sourced botanicals for radiant skin.",
             "cta_label": "Explore",
-            "cta_url": "shopify://collections/all"
+            "cta_url": "shopify://collections/all",
+            "show_overlay": true,
+            "overlay_opacity": 35
           }
         },
         {
@@ -458,7 +792,9 @@
             "heading_line2": "Formulas",
             "subtitle": "Dermatologist-tested care for every skin type.",
             "cta_label": "Discover",
-            "cta_url": "shopify://collections/all"
+            "cta_url": "shopify://collections/all",
+            "show_overlay": true,
+            "overlay_opacity": 35
           }
         }
       ],
@@ -466,6 +802,9 @@
         "color_scheme": "scheme-6",
         "section_width": "full-width",
         "show_preview_rail": true,
+        "autoplay": true,
+        "autoplay_speed": 5000,
+        "show_arrows": true,
         "padding-block-start": 0,
         "padding-block-end": 0
       }

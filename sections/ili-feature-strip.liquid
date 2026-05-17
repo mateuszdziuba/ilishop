@@ -7,31 +7,66 @@
   data-testid="ili-feature-strip"
 >
   {%- if section.settings.label != blank or section.settings.heading != blank -%}
-    {%- render 'ili-heading', label: section.settings.label, heading: section.settings.heading, alignment: 'center' -%}
+    {%- render 'ili-heading', label: section.settings.label, heading: section.settings.heading, alignment: section.settings.heading_alignment -%}
   {%- endif -%}
 
-  <div class="ili-feature-strip__grid">
+  <div class="ili-feature-strip__grid ili-feature-strip__grid--{{ section.settings.layout }}">
     {%- for block in section.blocks -%}
       {%- if block.type == 'ili-feature-item' -%}
-        <div class="ili-feature-strip__item" {{ block.shopify_attributes }}>
-          <div class="ili-feature-strip__icon">
-            {%- case block.settings.icon -%}
-              {%- when 'natural' -%}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4z"/></svg>
-              {%- when 'shield' -%}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              {%- when 'checkmark' -%}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-              {%- when 'shipping' -%}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-              {%- when 'leaf' -%}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66L12 14"/><path d="M2 2s7 4 14 1c0 0-1 7-8 10"/></svg>
-              {%- when 'star' -%}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            {%- endcase -%}
+        {%- assign icon_color = block.settings.icon_color | default: 'currentColor' -%}
+        <div
+          class="ili-feature-strip__item ili-feature-strip__item--{{ section.settings.item_style }}"
+          {{ block.shopify_attributes }}
+        >
+          {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="ili-feature-strip__item-link">{%- endif -%}
+
+          {%- if block.settings.custom_image != blank -%}
+            <div class="ili-feature-strip__icon ili-feature-strip__icon--image">
+              {{ block.settings.custom_image | image_url: width: 80 | image_tag: alt: block.settings.title, loading: 'lazy', class: 'ili-feature-strip__custom-img' }}
+            </div>
+          {%- elsif block.settings.icon != 'none' -%}
+            <div class="ili-feature-strip__icon" style="color: {{ icon_color }};">
+              {%- case block.settings.icon -%}
+                {%- when 'natural' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4z"/></svg>
+                {%- when 'shield' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                {%- when 'checkmark' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                {%- when 'shipping' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 8h14M5 8a2 2 0 01-2-2V4m2 4v10a1 1 0 001 1h11a1 1 0 001-1V8M9 21a1 1 0 100-2 1 1 0 000 2zm6 0a1 1 0 100-2 1 1 0 000 2M13 8V4H5a2 2 0 00-2 2v2"/></svg>
+                {%- when 'leaf' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66L12 14"/><path d="M2 2s7 4 14 1c0 0-1 7-8 10"/></svg>
+                {%- when 'star' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {%- when 'heart' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                {%- when 'lock' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                {%- when 'recycle' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                {%- when 'clock' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                {%- when 'gift' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
+                {%- when 'award' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+                {%- when 'droplet' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
+                {%- when 'sun' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              {%- endcase -%}
+            </div>
+          {%- endif -%}
+
+          <div class="ili-feature-strip__text">
+            <div class="ili-feature-strip__title">{{ block.settings.title }}</div>
+            {%- if block.settings.description != blank -%}
+              <div class="ili-feature-strip__desc">{{ block.settings.description }}</div>
+            {%- endif -%}
           </div>
-          <div class="ili-feature-strip__title">{{ block.settings.title }}</div>
-          <div class="ili-feature-strip__desc">{{ block.settings.description }}</div>
+
+          {%- if block.settings.link != blank -%}</a>{%- endif -%}
         </div>
       {%- endif -%}
     {%- endfor -%}
@@ -41,36 +76,103 @@
 {% stylesheet %}
   .ili-feature-strip__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 32px;
-    text-align: center;
+    gap: 24px;
     padding-top: 32px;
+  }
+
+  .ili-feature-strip__grid--columns {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    text-align: center;
+  }
+
+  .ili-feature-strip__grid--row {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    text-align: left;
+  }
+
+  .ili-feature-strip__item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .ili-feature-strip__item--columns {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ili-feature-strip__item--card {
+    flex-direction: column;
+    align-items: center;
+    background: var(--color-background);
+    border-radius: var(--ili-card-radius);
+    padding: 28px 24px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.04);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  .ili-feature-strip__item--card:hover {
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.1);
+    transform: translateY(-3px);
+  }
+
+  .ili-feature-strip__item-link {
+    display: contents;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .ili-feature-strip__icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .ili-feature-strip__icon svg {
     width: 32px;
     height: 32px;
-    stroke: var(--ili-text-primary);
-    margin-bottom: 12px;
+  }
+
+  .ili-feature-strip__icon--image {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .ili-feature-strip__custom-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
   .ili-feature-strip__title {
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--ili-text-primary);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-foreground-heading);
     margin-bottom: 4px;
+    line-height: 1.3;
   }
 
   .ili-feature-strip__desc {
     font-size: 14px;
-    color: var(--ili-text-muted);
+    color: var(--ili-text-muted, #6b6b6b);
     line-height: 1.5;
   }
 
   @media screen and (max-width: 749px) {
-    .ili-feature-strip__grid {
+    .ili-feature-strip__grid--columns {
       grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
+    }
+  }
+
+  @media screen and (max-width: 479px) {
+    .ili-feature-strip__grid--row {
+      grid-template-columns: 1fr;
     }
   }
 {% endstylesheet %}
@@ -110,6 +212,36 @@
       "label": "Section heading"
     },
     {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "columns", "label": "Columns (icon above text)" },
+        { "value": "row", "label": "Row (icon beside text)" }
+      ],
+      "default": "columns"
+    },
+    {
+      "type": "select",
+      "id": "item_style",
+      "label": "Item style",
+      "options": [
+        { "value": "columns", "label": "Plain" },
+        { "value": "card", "label": "Card" }
+      ],
+      "default": "columns"
+    },
+    {
       "type": "header",
       "content": "Padding"
     },
@@ -144,14 +276,35 @@
           "id": "icon",
           "label": "Icon",
           "options": [
-            { "value": "natural", "label": "Natural" },
-            { "value": "shield", "label": "Shield" },
-            { "value": "checkmark", "label": "Checkmark" },
-            { "value": "shipping", "label": "Shipping" },
-            { "value": "leaf", "label": "Leaf" },
-            { "value": "star", "label": "Star" }
+            { "value": "none", "label": "None (use custom image)" },
+            { "value": "natural", "label": "Natural / Organic" },
+            { "value": "shield", "label": "Shield / Protection" },
+            { "value": "checkmark", "label": "Checkmark / Verified" },
+            { "value": "shipping", "label": "Shipping / Delivery" },
+            { "value": "leaf", "label": "Leaf / Eco-friendly" },
+            { "value": "star", "label": "Star / Quality" },
+            { "value": "heart", "label": "Heart / Love" },
+            { "value": "lock", "label": "Lock / Secure" },
+            { "value": "recycle", "label": "Recycle / Sustainable" },
+            { "value": "clock", "label": "Clock / Fast" },
+            { "value": "gift", "label": "Gift" },
+            { "value": "award", "label": "Award / Certified" },
+            { "value": "droplet", "label": "Droplet / Hydration" },
+            { "value": "sun", "label": "Sun / SPF" }
           ],
           "default": "natural"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom icon image",
+          "info": "Replaces icon when set. Use a small square PNG or SVG."
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Icon color",
+          "default": "#1A1A1A"
         },
         {
           "type": "text",
@@ -160,10 +313,15 @@
           "default": "Natural Formula"
         },
         {
-          "type": "text",
+          "type": "textarea",
           "id": "description",
           "label": "Description",
           "default": "100% plant-based ingredients"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
         }
       ]
     }

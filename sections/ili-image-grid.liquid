@@ -9,12 +9,15 @@
       {% render 'ili-heading', label: section.settings.label, heading: section.settings.heading %}
     </div>
     {%- if section.settings.link_text != blank -%}
-      <a href="{{ section.settings.link_url }}" class="ili-image-grid__link">{{ section.settings.link_text }}</a>
+      <a href="{{ section.settings.link_url }}" class="ili-image-grid__link">
+        {{ section.settings.link_text }}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
     {%- endif -%}
   </div>
 
-  <div class="ili-image-grid__grid">
-    {%- comment -%} Each ili-image-grid-item block renders via blocks/ili-image-grid-item.liquid using: render 'ili-card' {%- endcomment -%}
+  <div class="ili-image-grid__grid ili-image-grid__grid--gap-{{ section.settings.gap }}">
+    {%- comment -%} Each ili-image-grid-item block renders via blocks/ili-image-grid-item.liquid {%- endcomment -%}
     {%- content_for 'blocks' -%}
   </div>
 </div>
@@ -24,17 +27,23 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     flex-wrap: wrap;
     gap: 16px;
   }
 
   .ili-image-grid__link {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    color: var(--ili-text-primary);
+    color: var(--color-foreground);
     text-decoration: none;
     border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
   }
 
   .ili-image-grid__link:hover {
@@ -43,13 +52,13 @@
 
   .ili-image-grid__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   }
 
-  .ili-image-grid__item {
-    aspect-ratio: 1 / 1;
-  }
+  .ili-image-grid__grid--gap-none { gap: 0; }
+  .ili-image-grid__grid--gap-small { gap: 4px; }
+  .ili-image-grid__grid--gap-medium { gap: 12px; }
+  .ili-image-grid__grid--gap-large { gap: 24px; }
 
   @media screen and (max-width: 749px) {
     .ili-image-grid__grid {
@@ -109,6 +118,18 @@
       "type": "url",
       "id": "link_url",
       "label": "Link URL"
+    },
+    {
+      "type": "select",
+      "id": "gap",
+      "label": "Image gap",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "small", "label": "Small (4px)" },
+        { "value": "medium", "label": "Medium (12px)" },
+        { "value": "large", "label": "Large (24px)" }
+      ],
+      "default": "small"
     },
     {
       "type": "header",
