@@ -86,6 +86,10 @@
         data-currency="{{ localization.country.currency.iso_code }}"
         on:change="/updatePriceFilterAndResults"
       >
+        {%- comment -%}
+          The slider is visual-only. The text inputs below (minInput/maxInput)
+          are the primary accessible interface for setting price range values.
+        {%- endcomment -%}
         <div class="price-range-slider" aria-hidden="true">
           <div class="price-range-slider__track">
             <div class="price-range-slider__fill" ref="rangeFill"></div>
