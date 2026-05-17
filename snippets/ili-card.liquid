@@ -7,13 +7,22 @@
   @param {string} badge_text - Badge text rendered via ili-badge (optional)
   @param {string} title - Card title text (optional)
   @param {string} subtitle - Card subtitle/description (optional)
+  @param {string} cta_label - Optional CTA button text (optional)
+  @param {number} aspect_ratio_w - Aspect ratio width (default 1)
+  @param {number} aspect_ratio_h - Aspect ratio height (default 1)
 {%- enddoc -%}
 
+{%- liquid
+  assign ar_w = aspect_ratio_w | default: 1
+  assign ar_h = aspect_ratio_h | default: 1
+  assign ar = ar_w | divided_by: ar_h | times: 100.0
+-%}
+
 <div class="ili-card">
-  <div class="ili-card__media">
-    {% if url != blank %}<a href="{{ url }}" class="ili-card__link">{% endif %}
+  <div class="ili-card__media" style="padding-bottom: {{ ar }}%;">
+    {% if url != blank %}<a href="{{ url }}" class="ili-card__link" tabindex="-1" aria-hidden="true">{% endif %}
       {% if image != blank %}
-        {{ image | image_url: width: 600 | image_tag: alt: image_alt, loading: 'lazy', class: 'ili-card__img' }}
+        {{ image | image_url: width: 800 | image_tag: alt: image_alt, loading: 'lazy', class: 'ili-card__img' }}
       {% else %}
         {{ 'image' | placeholder_svg_tag: 'ili-card__img ili-card__placeholder' }}
       {% endif %}
@@ -22,68 +31,122 @@
       {% endif %}
     {% if url != blank %}</a>{% endif %}
   </div>
-  {% if title != blank or subtitle != blank %}
+  {% if title != blank or subtitle != blank or cta_label != blank %}
     <div class="ili-card__body">
-      {% if title != blank %}<h3 class="ili-card__title">{{ title }}</h3>{% endif %}
+      {% if title != blank %}
+        {% if url != blank %}
+          <a href="{{ url }}" class="ili-card__title-link"><h3 class="ili-card__title">{{ title }}</h3></a>
+        {% else %}
+          <h3 class="ili-card__title">{{ title }}</h3>
+        {% endif %}
+      {% endif %}
       {% if subtitle != blank %}<p class="ili-card__subtitle">{{ subtitle }}</p>{% endif %}
+      {% if cta_label != blank and url != blank %}
+        <a href="{{ url }}" class="ili-card__cta">{{ cta_label }}</a>
+      {% endif %}
     </div>
   {% endif %}
 </div>
 
-<style>
+{% stylesheet %}
   .ili-card {
-    border-radius: var(--ili-card-radius);
+    border-radius: var(--ili-card-radius, 10px);
     overflow: hidden;
-    background: #fff;
+    background: var(--color-background);
   }
 
   .ili-card__media {
     position: relative;
     overflow: hidden;
-    aspect-ratio: 1 / 1;
+    width: 100%;
+    height: 0;
   }
 
   .ili-card__img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .ili-card:hover .ili-card__img {
-    transform: scale(1.05);
+    transform: scale(1.06);
   }
 
   .ili-card__badge {
     position: absolute;
     top: 12px;
     left: 12px;
+    z-index: 1;
   }
 
   .ili-card__body {
-    padding: 16px 0;
+    padding: 16px 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .ili-card__title {
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--ili-text-primary);
-    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-foreground-heading);
+    margin: 0;
+    line-height: 1.35;
+  }
+
+  .ili-card__title-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .ili-card__title-link:hover .ili-card__title {
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   .ili-card__subtitle {
-    font-size: 14px;
-    color: var(--ili-text-muted);
+    font-size: 13px;
+    color: var(--ili-text-muted, #6B6B6B);
     margin: 0;
+    line-height: 1.5;
   }
 
   .ili-card__link {
     display: block;
     text-decoration: none;
     color: inherit;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+  }
+
+  .ili-card__cta {
+    display: inline-flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground-heading);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+    width: fit-content;
+    margin-top: 4px;
+    transition: opacity 0.2s ease;
+  }
+
+  .ili-card__cta:hover {
+    opacity: 0.7;
   }
 
   .ili-card__placeholder {
-    background: var(--ili-cream);
+    background: var(--ili-cream, #F5F3EF);
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
   }
-</style>
+{% endstylesheet %}

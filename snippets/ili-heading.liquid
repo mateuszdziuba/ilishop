@@ -6,47 +6,93 @@
   @param {string} [subtext] - Supporting body text
   @param {string} [heading_level] - HTML heading tag level, e.g. 'h2' (default: 'h2')
   @param {string} [alignment] - Text alignment: 'left', 'center', or 'right' (default: 'left')
+  @param {string} [max_width] - Custom max-width for subtext (default: '560px')
 {%- enddoc -%}
 
 {%- liquid
   assign heading_tag = heading_level | default: 'h2'
+  assign text_align = alignment | default: 'left'
+  assign subtext_max = max_width | default: '560px'
 -%}
 
-<div class="ili-heading" style="text-align: {{ alignment | default: 'left' }};">
-  {% if label != blank %}<p class="ili-heading__label">{{ label }}</p>{% endif %}
-  {% if heading != blank %}<{{ heading_tag }} class="ili-heading__title">{{ heading }}</{{ heading_tag }}>{% endif %}
-  {% if subtext != blank %}<p class="ili-heading__subtext">{{ subtext }}</p>{% endif %}
+<div class="ili-heading ili-heading--{{ text_align }}" style="text-align: {{ text_align }};">
+  {% if label != blank %}
+    <p class="ili-heading__label">
+      <span class="ili-heading__label-inner">{{ label }}</span>
+    </p>
+  {% endif %}
+  {% if heading != blank %}
+    <{{ heading_tag }} class="ili-heading__title">{{ heading }}</{{ heading_tag }}>
+  {% endif %}
+  {% if subtext != blank %}
+    <p class="ili-heading__subtext" style="max-width: {{ subtext_max }};">{{ subtext }}</p>
+  {% endif %}
 </div>
 
-<style>
+{% stylesheet %}
+  .ili-heading {
+    margin-bottom: 12px;
+  }
+
   .ili-heading__label {
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
+    margin: 0 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ili-heading--center .ili-heading__label {
+    justify-content: center;
+  }
+
+  .ili-heading__label-inner {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--ili-text-muted);
-    margin-bottom: 16px;
+    color: var(--ili-text-muted, #6B6B6B);
+    position: relative;
+  }
+
+  .ili-heading__label-inner::before,
+  .ili-heading__label-inner::after {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--ili-text-muted, #6B6B6B);
+    vertical-align: middle;
+    margin: 0 8px;
+    opacity: 0.5;
+  }
+
+  .ili-heading--left .ili-heading__label-inner::before {
+    display: none;
   }
 
   .ili-heading__title {
-    font-size: clamp(32px, 4vw, 52px);
+    font-size: clamp(28px, 3.5vw, 48px);
     font-weight: 400;
     line-height: 1.15;
-    color: var(--ili-text-primary);
+    color: var(--color-foreground-heading);
     margin: 0 0 16px;
+    letter-spacing: -0.01em;
   }
 
   .ili-heading__subtext {
     font-size: 15px;
     font-weight: 400;
-    line-height: 1.6;
-    color: var(--ili-text-muted);
-    max-width: 560px;
+    line-height: 1.65;
+    color: var(--ili-text-muted, #6B6B6B);
     margin: 0;
   }
 
-  .ili-heading[style*="text-align: center"] .ili-heading__subtext {
+  .ili-heading--center .ili-heading__subtext {
     margin-left: auto;
     margin-right: auto;
   }
-</style>
+
+  .ili-heading--right .ili-heading__subtext {
+    margin-left: auto;
+  }
+{% endstylesheet %}

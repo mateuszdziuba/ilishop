@@ -7,68 +7,310 @@
   data-testid="ili-testimonial"
 >
   {%- if section.settings.label != blank or section.settings.heading != blank -%}
-    {%- render 'ili-heading', label: section.settings.label, heading: section.settings.heading, alignment: 'center' -%}
+    {%- render 'ili-heading', label: section.settings.label, heading: section.settings.heading, alignment: section.settings.heading_alignment | default: 'center' -%}
   {%- endif -%}
 
-  <div class="ili-testimonial__content">
-    {%- for block in section.blocks -%}
-      {%- if block.type == 'ili-testimonial-quote' -%}
-        <div class="ili-testimonial__quote-block" {{ block.shopify_attributes }}>
-          <div class="ili-testimonial__stars" aria-label="{{ block.settings.stars }} out of 5 stars">
-            {%- for i in (1..block.settings.stars) -%}&#9733;{%- endfor -%}
+  {%- liquid
+    assign layout = section.settings.layout | default: 'single'
+    assign quote_count = 0
+    for block in section.blocks
+      if block.type == 'ili-testimonial-quote'
+        assign quote_count = quote_count | plus: 1
+      endif
+    endfor
+  -%}
+
+  {%- if layout == 'grid' -%}
+    <div class="ili-testimonial__grid" style="--testimonial-columns: {{ section.settings.grid_columns | default: 3 }};">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'ili-testimonial-quote' -%}
+          <div class="ili-testimonial__card" {{ block.shopify_attributes }}>
+            <div class="ili-testimonial__stars" aria-label="{{ block.settings.stars }} out of 5 stars">
+              {%- for i in (1..block.settings.stars) -%}&#9733;{%- endfor -%}
+            </div>
+            <blockquote class="ili-testimonial__quote">{{ block.settings.quote }}</blockquote>
+            <div class="ili-testimonial__author-row">
+              {%- if block.settings.avatar != blank -%}
+                <div class="ili-testimonial__avatar">
+                  {{ block.settings.avatar | image_url: width: 80 | image_tag: alt: block.settings.author, loading: 'lazy', class: 'ili-testimonial__avatar-img' }}
+                </div>
+              {%- endif -%}
+              <div>
+                {%- if block.settings.author != blank -%}
+                  <cite class="ili-testimonial__author">{{ block.settings.author }}</cite>
+                {%- endif -%}
+                {%- if block.settings.rating_summary != blank -%}
+                  <div class="ili-testimonial__rating-summary">{{ block.settings.rating_summary }}</div>
+                {%- endif -%}
+              </div>
+            </div>
           </div>
-          <blockquote class="ili-testimonial__quote">
-            {{ block.settings.quote }}
-          </blockquote>
-          {%- if block.settings.author != blank -%}
-            <cite class="ili-testimonial__author">{{ block.settings.author }}</cite>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+  {%- else -%}
+    {%- comment -%} Single / carousel layout {%- endcomment -%}
+    <div
+      class="ili-testimonial__carousel"
+      data-total="{{ quote_count }}"
+    >
+      <div class="ili-testimonial__slides">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'ili-testimonial-quote' -%}
+            <div
+              class="ili-testimonial__slide{% if forloop.first %} active{% endif %}"
+              data-index="{{ forloop.index0 }}"
+              {{ block.shopify_attributes }}
+            >
+              <div class="ili-testimonial__quote-block">
+                <div class="ili-testimonial__stars" aria-label="{{ block.settings.stars }} out of 5 stars">
+                  {%- for i in (1..block.settings.stars) -%}&#9733;{%- endfor -%}
+                </div>
+                <blockquote class="ili-testimonial__quote">
+                  <span class="ili-testimonial__open-quote" aria-hidden="true">&#8220;</span>{{ block.settings.quote }}<span class="ili-testimonial__close-quote" aria-hidden="true">&#8221;</span>
+                </blockquote>
+                <div class="ili-testimonial__author-row">
+                  {%- if block.settings.avatar != blank -%}
+                    <div class="ili-testimonial__avatar">
+                      {{ block.settings.avatar | image_url: width: 80 | image_tag: alt: block.settings.author, loading: 'lazy', class: 'ili-testimonial__avatar-img' }}
+                    </div>
+                  {%- endif -%}
+                  <div>
+                    {%- if block.settings.author != blank -%}
+                      <cite class="ili-testimonial__author">{{ block.settings.author }}</cite>
+                    {%- endif -%}
+                    {%- if block.settings.rating_summary != blank -%}
+                      <div class="ili-testimonial__rating-summary">{{ block.settings.rating_summary }}</div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+            </div>
           {%- endif -%}
-          {%- if block.settings.rating_summary != blank -%}
-            <div class="ili-testimonial__rating-summary">{{ block.settings.rating_summary }}</div>
-          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      {%- if quote_count > 1 -%}
+        <div class="ili-testimonial__nav">
+          <button class="ili-testimonial__arrow ili-testimonial__arrow--prev" type="button" aria-label="Previous testimonial">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="ili-testimonial__dots">
+            {%- assign dot_i = 0 -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'ili-testimonial-quote' -%}
+                <button class="ili-testimonial__dot{% if dot_i == 0 %} active{% endif %}" data-index="{{ dot_i }}" type="button" aria-label="Go to testimonial {{ dot_i | plus: 1 }}"></button>
+                {%- assign dot_i = dot_i | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          <button class="ili-testimonial__arrow ili-testimonial__arrow--next" type="button" aria-label="Next testimonial">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
         </div>
       {%- endif -%}
-    {%- endfor -%}
-  </div>
+    </div>
+  {%- endif -%}
 </div>
 
+<script>
+  (function () {
+    document.querySelectorAll('.ili-testimonial__carousel').forEach(function (carousel) {
+      var slides = carousel.querySelectorAll('.ili-testimonial__slide');
+      var dots = carousel.querySelectorAll('.ili-testimonial__dot');
+      var prevBtn = carousel.querySelector('.ili-testimonial__arrow--prev');
+      var nextBtn = carousel.querySelector('.ili-testimonial__arrow--next');
+      var total = slides.length;
+      var current = 0;
+      if (total < 2) return;
+      function goTo(n) {
+        slides[current].classList.remove('active');
+        dots[current] && dots[current].classList.remove('active');
+        current = ((n % total) + total) % total;
+        slides[current].classList.add('active');
+        dots[current] && dots[current].classList.add('active');
+      }
+      dots.forEach(function (d) { d.addEventListener('click', function () { goTo(+d.dataset.index); }); });
+      if (prevBtn) prevBtn.addEventListener('click', function () { goTo(current - 1); });
+      if (nextBtn) nextBtn.addEventListener('click', function () { goTo(current + 1); });
+    });
+  })();
+</script>
+
 {% stylesheet %}
-  .ili-testimonial__content {
-    text-align: center;
-    max-width: 720px;
-    margin: 0 auto;
+  /* Grid layout */
+  .ili-testimonial__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--testimonial-columns, 3), 1fr);
+    gap: 24px;
+    margin-top: 48px;
   }
 
+  .ili-testimonial__card {
+    background: var(--color-background);
+    border-radius: var(--ili-card-radius);
+    padding: 28px;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Carousel layout */
+  .ili-testimonial__carousel {
+    max-width: 760px;
+    margin: 48px auto 0;
+    text-align: center;
+  }
+
+  .ili-testimonial__slides {
+    position: relative;
+    min-height: 200px;
+  }
+
+  .ili-testimonial__slide {
+    display: none;
+    animation: ili-testimonial-fade 0.4s ease both;
+  }
+
+  .ili-testimonial__slide.active {
+    display: block;
+  }
+
+  @keyframes ili-testimonial-fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Shared */
   .ili-testimonial__stars {
-    font-size: 24px;
-    color: var(--ili-sage);
-    margin-bottom: 24px;
-    letter-spacing: 4px;
+    font-size: 20px;
+    color: var(--ili-sage, #8B9E6E);
+    letter-spacing: 3px;
+    margin-bottom: 16px;
   }
 
   .ili-testimonial__quote {
-    font-size: clamp(20px, 3vw, 28px);
+    font-size: clamp(18px, 2.5vw, 26px);
     font-weight: 400;
-    line-height: 1.5;
-    color: var(--ili-text-primary);
+    line-height: 1.55;
+    color: var(--color-foreground-heading);
     font-style: normal;
     margin: 0 0 24px;
     padding: 0;
     border: 0;
   }
 
+  .ili-testimonial__open-quote,
+  .ili-testimonial__close-quote {
+    font-family: var(--font-heading--family);
+    font-style: italic;
+    font-size: 1.4em;
+    opacity: 0.4;
+    line-height: 0;
+    vertical-align: -0.25em;
+    margin: 0 4px;
+  }
+
+  .ili-testimonial__author-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ili-testimonial__carousel .ili-testimonial__author-row {
+    justify-content: center;
+  }
+
+  .ili-testimonial__avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .ili-testimonial__avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   .ili-testimonial__author {
     font-size: 14px;
-    font-weight: 500;
-    color: var(--ili-text-primary);
+    font-weight: 600;
+    color: var(--color-foreground-heading);
     display: block;
-    margin-bottom: 8px;
     font-style: normal;
   }
 
   .ili-testimonial__rating-summary {
     font-size: 13px;
-    color: var(--ili-text-muted);
+    color: var(--ili-text-muted, #6b6b6b);
+    margin-top: 2px;
+  }
+
+  /* Carousel navigation */
+  .ili-testimonial__nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .ili-testimonial__arrow {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--ili-border, #E8E4DF);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-foreground);
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .ili-testimonial__arrow:hover {
+    background: var(--ili-cream, #F5F3EF);
+    border-color: var(--color-foreground);
+  }
+
+  .ili-testimonial__dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .ili-testimonial__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ili-border, #E8E4DF);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .ili-testimonial__dot.active {
+    background: var(--color-foreground);
+    transform: scale(1.25);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ili-testimonial__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (prefers-reduced-motion: reduce) {
+    .ili-testimonial__slide {
+      animation: none;
+    }
   }
 {% endstylesheet %}
 
@@ -107,6 +349,37 @@
       "label": "Section heading"
     },
     {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "single", "label": "Carousel / Single quote" },
+        { "value": "grid", "label": "Grid" }
+      ],
+      "default": "single"
+    },
+    {
+      "type": "select",
+      "id": "grid_columns",
+      "label": "Grid columns",
+      "info": "Only applies when Layout is Grid",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" }
+      ],
+      "default": "3"
+    },
+    {
       "type": "header",
       "content": "Padding"
     },
@@ -142,6 +415,11 @@
           "label": "Quote text"
         },
         {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "Author photo"
+        },
+        {
           "type": "text",
           "id": "author",
           "label": "Author name & title"
@@ -174,6 +452,24 @@
           "settings": {
             "quote": "I\u2019ve tried dozens of skincare brands and nothing has transformed my skin like Ili. My skin is clearer, softer, and genuinely glowing.",
             "author": "Jennifer K., Verified Buyer",
+            "stars": 5,
+            "rating_summary": "4.7 / 5 \u00b7 1,109 reviews"
+          }
+        },
+        {
+          "type": "ili-testimonial-quote",
+          "settings": {
+            "quote": "Finally a brand that actually delivers. My skin has never felt so balanced and nourished \u2014 I tell everyone about Ili.",
+            "author": "Marcus T., Verified Buyer",
+            "stars": 5,
+            "rating_summary": "4.7 / 5 \u00b7 1,109 reviews"
+          }
+        },
+        {
+          "type": "ili-testimonial-quote",
+          "settings": {
+            "quote": "Gentle, effective and smells amazing. I love that it\u2019s cruelty-free and made with real ingredients.",
+            "author": "Sophie L., Verified Buyer",
             "stars": 5,
             "rating_summary": "4.7 / 5 \u00b7 1,109 reviews"
           }

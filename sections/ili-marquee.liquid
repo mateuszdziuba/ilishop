@@ -1,27 +1,45 @@
 {%- comment -%} sections/ili-marquee.liquid {%- endcomment -%}
 
+{%- liquid
+  assign speed = section.settings.speed | default: 25
+  assign direction = section.settings.direction | default: 'left'
+  assign pause_on_hover = section.settings.pause_on_hover | default: true
+  assign separator = section.settings.separator | default: '🌿'
+-%}
+
 <div
-  class="ili-marquee color-{{ section.settings.color_scheme }}"
+  class="ili-marquee color-{{ section.settings.color_scheme }}{% if pause_on_hover %} ili-marquee--pausable{% endif %}"
   style="{% render 'spacing-style', settings: section.settings %}"
   data-testid="ili-marquee"
 >
-  <div class="ili-marquee__track" aria-label="{{ section.settings.phrase_1 }} {{ section.settings.phrase_2 }} {{ section.settings.phrase_3 }}">
-    <div class="ili-marquee__text" aria-hidden="false">
-      <span class="ili-marquee__sans">{{ section.settings.phrase_1 }}</span>
-      <span class="ili-marquee__sep">{{ section.settings.separator | default: '&#127807;' }}</span>
-      <span class="ili-marquee__serif">{{ section.settings.phrase_2 }}</span>
-      <span class="ili-marquee__sep">{{ section.settings.separator | default: '&#127807;' }}</span>
-      <span class="ili-marquee__sans">{{ section.settings.phrase_3 }}</span>
-      <span class="ili-marquee__sep">{{ section.settings.separator | default: '&#127807;' }}</span>
-    </div>
-    <div class="ili-marquee__text" aria-hidden="true">
-      <span class="ili-marquee__sans">{{ section.settings.phrase_1 }}</span>
-      <span class="ili-marquee__sep">{{ section.settings.separator | default: '&#127807;' }}</span>
-      <span class="ili-marquee__serif">{{ section.settings.phrase_2 }}</span>
-      <span class="ili-marquee__sep">{{ section.settings.separator | default: '&#127807;' }}</span>
-      <span class="ili-marquee__sans">{{ section.settings.phrase_3 }}</span>
-      <span class="ili-marquee__sep">{{ section.settings.separator | default: '&#127807;' }}</span>
-    </div>
+  <div
+    class="ili-marquee__track"
+    style="animation-duration: {{ speed }}s; animation-direction: {% if direction == 'right' %}reverse{% else %}normal{% endif %};"
+    aria-label="{{ section.settings.aria_label | default: 'Marquee text' }}"
+  >
+    {%- comment -%} Duplicate track for seamless loop {%- endcomment -%}
+    {%- for rep in (1..2) -%}
+      <div class="ili-marquee__text" {% if rep == 2 %}aria-hidden="true"{% endif %}>
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'ili-marquee-item' -%}
+              <span class="ili-marquee__phrase {% if block.settings.style == 'serif' %}ili-marquee__serif{% else %}ili-marquee__sans{% endif %}" {{ block.shopify_attributes }}>
+                {{ block.settings.phrase }}
+              </span>
+              <span class="ili-marquee__sep" aria-hidden="true">{{ separator }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          {%- comment -%} Fallback to settings-based phrases {%- endcomment -%}
+          <span class="ili-marquee__sans">{{ section.settings.phrase_1 }}</span>
+          <span class="ili-marquee__sep" aria-hidden="true">{{ separator }}</span>
+          <span class="ili-marquee__serif">{{ section.settings.phrase_2 }}</span>
+          <span class="ili-marquee__sep" aria-hidden="true">{{ separator }}</span>
+          <span class="ili-marquee__sans">{{ section.settings.phrase_3 }}</span>
+          <span class="ili-marquee__sep" aria-hidden="true">{{ separator }}</span>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
   </div>
 </div>
 
@@ -29,42 +47,52 @@
   .ili-marquee {
     overflow: hidden;
     white-space: nowrap;
-    border-top: 1px solid var(--ili-border);
-    border-bottom: 1px solid var(--ili-border);
+    border-top: 1px solid var(--ili-border, #E8E4DF);
+    border-bottom: 1px solid var(--ili-border, #E8E4DF);
   }
 
   .ili-marquee__track {
     display: flex;
     align-items: center;
     gap: 24px;
-    animation: ili-marquee-scroll 25s linear infinite;
+    animation: ili-marquee-scroll linear infinite;
     width: max-content;
+  }
+
+  .ili-marquee--pausable .ili-marquee__track:hover {
+    animation-play-state: paused;
   }
 
   .ili-marquee__text {
     display: flex;
     align-items: center;
     gap: 24px;
+    padding: 14px 0;
   }
 
   .ili-marquee__sans {
-    font-size: clamp(14px, 2vw, 18px);
-    font-weight: 400;
+    font-size: clamp(13px, 1.8vw, 16px);
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--ili-text-primary);
+    letter-spacing: 0.1em;
+    color: var(--color-foreground-heading);
   }
 
   .ili-marquee__serif {
-    font-size: clamp(14px, 2vw, 18px);
+    font-size: clamp(13px, 1.8vw, 16px);
     font-style: italic;
     font-family: var(--font-heading--family);
-    color: var(--ili-text-primary);
+    color: var(--color-foreground-heading);
+  }
+
+  .ili-marquee__phrase {
+    display: inline-block;
   }
 
   .ili-marquee__sep {
-    color: var(--ili-sage);
-    font-size: 16px;
+    color: var(--ili-sage, #8B9E6E);
+    font-size: 14px;
+    display: inline-block;
   }
 
   @keyframes ili-marquee-scroll {
@@ -95,6 +123,50 @@
       "default": "scheme-1"
     },
     {
+      "type": "range",
+      "id": "speed",
+      "label": "Scroll speed",
+      "info": "Lower = faster",
+      "min": 8,
+      "max": 60,
+      "step": 2,
+      "default": 25
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "label": "Scroll direction",
+      "options": [
+        { "value": "left", "label": "Left (default)" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "separator",
+      "label": "Separator character",
+      "default": "🌿"
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "Accessible label",
+      "info": "Screen reader description for the marquee",
+      "default": "Brand highlights"
+    },
+    {
+      "type": "header",
+      "content": "Fallback phrases",
+      "info": "Used when no phrase blocks are added"
+    },
+    {
       "type": "text",
       "id": "phrase_1",
       "label": "Phrase 1",
@@ -113,12 +185,6 @@
       "default": "Cruelty Free"
     },
     {
-      "type": "text",
-      "id": "separator",
-      "label": "Separator",
-      "default": "🌿"
-    },
-    {
       "type": "header",
       "content": "Padding"
     },
@@ -130,7 +196,7 @@
       "max": 120,
       "step": 4,
       "unit": "px",
-      "default": 20
+      "default": 0
     },
     {
       "type": "range",
@@ -140,13 +206,43 @@
       "max": 120,
       "step": 4,
       "unit": "px",
-      "default": 20
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ili-marquee-item",
+      "name": "Phrase",
+      "settings": [
+        {
+          "type": "text",
+          "id": "phrase",
+          "label": "Phrase",
+          "default": "Natural Ingredients"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Text style",
+          "options": [
+            { "value": "sans", "label": "Regular" },
+            { "value": "serif", "label": "Italic" }
+          ],
+          "default": "sans"
+        }
+      ]
     }
   ],
   "presets": [
     {
       "name": "Ili Marquee",
-      "category": "Ili Editorial"
+      "category": "Ili Editorial",
+      "blocks": [
+        { "type": "ili-marquee-item", "settings": { "phrase": "Natural Ingredients", "style": "sans" } },
+        { "type": "ili-marquee-item", "settings": { "phrase": "Dermatologist Approved", "style": "serif" } },
+        { "type": "ili-marquee-item", "settings": { "phrase": "Cruelty Free", "style": "sans" } },
+        { "type": "ili-marquee-item", "settings": { "phrase": "Eco-Friendly Packaging", "style": "serif" } }
+      ]
     }
   ]
 }
