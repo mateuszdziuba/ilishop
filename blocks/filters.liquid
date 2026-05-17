@@ -514,6 +514,14 @@
   .facets-block-wrapper--vertical {
     @media screen and (min-width: 750px) {
       grid-column: var(--grid-column--desktop);
+      position: sticky;
+      top: var(--sticky-header-offset, 0);
+      max-height: calc(100vh - var(--sticky-header-offset, 0px));
+      overflow-y: auto;
+      align-self: start;
+      scrollbar-width: thin;
+      scrollbar-color: rgb(var(--color-foreground-rgb) / 0.2) transparent;
+      overscroll-behavior: contain;
     }
   }
 
