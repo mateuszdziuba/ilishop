@@ -20,21 +20,13 @@
         if custom_bg != blank and custom_bg != 'rgba(0,0,0,0)'
           assign custom_bg_style = 'background:' | append: custom_bg | append: ';'
         endif
-        assign span_style = ''
-        if col_span != '1'
-          assign span_style = 'grid-column:span ' | append: col_span | append: ';'
-        endif
-        if row_span
-          assign span_style = span_style | append: 'grid-row:span 2;'
-        endif
-        assign item_style = span_style | append: custom_bg_style
       -%}
       {%- case block.type -%}
 
         {%- when 'ili-bento-title' -%}
           <div
-            class="ili-bento__item ili-bento__item--title"
-            style="{{ item_style }}"
+            class="ili-bento__item ili-bento__item--title ili-bento__item--col-{{ col_span }}"
+            style="{{ custom_bg_style }}"
             {{ block.shopify_attributes }}
           >
             {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="ili-bento__item-link">{%- endif -%}
@@ -44,8 +36,8 @@
 
         {%- when 'ili-bento-image' -%}
           <div
-            class="ili-bento__item ili-bento__item--image"
-            style="{{ item_style }}"
+            class="ili-bento__item ili-bento__item--image ili-bento__item--col-{{ col_span }}{% if row_span %} ili-bento__item--row-2{% endif %}"
+            style="{{ custom_bg_style }}"
             {{ block.shopify_attributes }}
           >
             {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="ili-bento__img-link">{%- endif -%}
@@ -62,8 +54,8 @@
 
         {%- when 'ili-bento-rating' -%}
           <div
-            class="ili-bento__item ili-bento__item--rating"
-            style="{{ item_style }}"
+            class="ili-bento__item ili-bento__item--rating ili-bento__item--col-{{ col_span }}"
+            style="{{ custom_bg_style }}"
             {{ block.shopify_attributes }}
           >
             <div class="ili-bento__stars">
@@ -78,8 +70,8 @@
 
         {%- when 'ili-bento-text' -%}
           <div
-            class="ili-bento__item ili-bento__item--text"
-            style="{{ item_style }}"
+            class="ili-bento__item ili-bento__item--text ili-bento__item--col-{{ col_span }}"
+            style="{{ custom_bg_style }}"
             {{ block.shopify_attributes }}
           >
             {%- if block.settings.show_checkmark -%}
@@ -96,8 +88,8 @@
 
         {%- when 'ili-bento-navy' -%}
           <div
-            class="ili-bento__item ili-bento__item--navy"
-            style="{{ item_style }}"
+            class="ili-bento__item ili-bento__item--navy ili-bento__item--col-{{ col_span }}"
+            style="{{ custom_bg_style }}"
             {{ block.shopify_attributes }}
           >
             <h4 class="ili-bento__card-heading">
@@ -119,8 +111,8 @@
 
         {%- when 'ili-bento-cta' -%}
           <div
-            class="ili-bento__item ili-bento__item--cta"
-            style="{{ item_style }}"
+            class="ili-bento__item ili-bento__item--cta ili-bento__item--col-{{ col_span }}"
+            style="{{ custom_bg_style }}"
             {{ block.shopify_attributes }}
           >
             {%- if block.settings.eyebrow != blank -%}
@@ -376,16 +368,20 @@
     border-color: rgba(255,255,255,0.88);
   }
 
+  /* Column span classes */
+  .ili-bento__item--col-2 { grid-column: span 2; }
+  .ili-bento__item--col-3 { grid-column: span 3; }
+  .ili-bento__item--col-4 { grid-column: span 4; }
+  .ili-bento__item--row-2 { grid-row: span 2; }
+
   @media screen and (max-width: 749px) {
     .ili-bento__grid {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    .ili-bento__grid [style*="grid-column:span 4"],
-    .ili-bento__grid [style*="grid-column: span 4"],
-    .ili-bento__grid [style*="grid-column:span 3"],
-    .ili-bento__grid [style*="grid-column: span 3"] {
-      grid-column: span 2 !important;
+    .ili-bento__item--col-3,
+    .ili-bento__item--col-4 {
+      grid-column: span 2;
     }
   }
 
@@ -394,12 +390,14 @@
       grid-template-columns: 1fr;
     }
 
-    .ili-bento__grid [style*="grid-column"] {
-      grid-column: span 1 !important;
+    .ili-bento__item--col-2,
+    .ili-bento__item--col-3,
+    .ili-bento__item--col-4 {
+      grid-column: span 1;
     }
 
-    .ili-bento__grid [style*="grid-row"] {
-      grid-row: span 1 !important;
+    .ili-bento__item--row-2 {
+      grid-row: span 1;
     }
   }
 {% endstylesheet %}

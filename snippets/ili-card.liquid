@@ -15,7 +15,10 @@
 {%- liquid
   assign ar_w = aspect_ratio_w | default: 1
   assign ar_h = aspect_ratio_h | default: 1
-  assign ar = ar_w | divided_by: ar_h | times: 100.0
+  if ar_h == 0
+    assign ar_h = 1
+  endif
+  assign ar = ar_w | times: 100.0 | divided_by: ar_h
 -%}
 
 <div class="ili-card">

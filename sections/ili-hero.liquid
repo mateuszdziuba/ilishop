@@ -52,7 +52,10 @@
         {%- assign content_h = b.content_position_v | default: 'bottom' -%}
         {%- assign content_align = b.content_position_h | default: 'left' -%}
         {%- assign text_color = b.text_color | default: '#ffffff' -%}
-        {%- assign overlay_opacity_pct = b.overlay_opacity | default: 35 -%}
+        {%- assign overlay_opacity_pct = 35 -%}
+        {%- if b.overlay_opacity != blank -%}
+          {%- assign overlay_opacity_pct = b.overlay_opacity -%}
+        {%- endif -%}
         {%- assign overlay_opacity_dec = overlay_opacity_pct | divided_by: 100.0 -%}
         {%- assign overlay_base = b.overlay_color | default: '#000000' -%}
         {%- assign overlay_css = overlay_base | color_modify: 'alpha', overlay_opacity_dec -%}

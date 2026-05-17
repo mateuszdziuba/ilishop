@@ -31,12 +31,18 @@
           {%- endfor -%}
         {%- else -%}
           {%- comment -%} Fallback to settings-based phrases {%- endcomment -%}
-          <span class="ili-marquee__sans">{{ section.settings.phrase_1 }}</span>
-          <span class="ili-marquee__sep" aria-hidden="true">{{ separator }}</span>
-          <span class="ili-marquee__serif">{{ section.settings.phrase_2 }}</span>
-          <span class="ili-marquee__sep" aria-hidden="true">{{ separator }}</span>
-          <span class="ili-marquee__sans">{{ section.settings.phrase_3 }}</span>
-          <span class="ili-marquee__sep" aria-hidden="true">{{ separator }}</span>
+          {%- if section.settings.phrase_1 != blank -%}
+            <span class="ili-marquee__sans">{{ section.settings.phrase_1 }}</span>
+            <span class="ili-marquee__sep" aria-hidden="true">{{ separator }}</span>
+          {%- endif -%}
+          {%- if section.settings.phrase_2 != blank -%}
+            <span class="ili-marquee__serif">{{ section.settings.phrase_2 }}</span>
+            <span class="ili-marquee__sep" aria-hidden="true">{{ separator }}</span>
+          {%- endif -%}
+          {%- if section.settings.phrase_3 != blank -%}
+            <span class="ili-marquee__sans">{{ section.settings.phrase_3 }}</span>
+            <span class="ili-marquee__sep" aria-hidden="true">{{ separator }}</span>
+          {%- endif -%}
         {%- endif -%}
       </div>
     {%- endfor -%}
