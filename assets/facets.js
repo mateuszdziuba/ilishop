@@ -209,6 +209,9 @@ if (!customElements.get('facet-inputs-component')) {
  * @typedef {Object} PriceFacetRefs
  * @property {HTMLInputElement} minInput - The minimum price input
  * @property {HTMLInputElement} maxInput - The maximum price input
+ * @property {HTMLInputElement | undefined} rangeMinSlider - The minimum price range slider
+ * @property {HTMLInputElement | undefined} rangeMaxSlider - The maximum price range slider
+ * @property {HTMLElement | undefined} rangeFill - The range fill track element
  */
 
 /**
@@ -226,6 +229,7 @@ class PriceFacetComponent extends Component {
     this.addEventListener('keydown', this.#onKeyDown);
     this.currency = this.dataset.currency ?? 'USD';
     this.moneyFormat = this.#extractMoneyPlaceholder(this.dataset.moneyFormat ?? '{{amount}}');
+    this.#initSlider();
   }
 
   disconnectedCallback() {
@@ -249,10 +253,110 @@ class PriceFacetComponent extends Component {
    */
   #onKeyDown = (event) => {
     if (event.metaKey) return;
+    // Allow all keys on range inputs (arrow keys control the slider)
+    if (event.target instanceof HTMLInputElement && event.target.type === 'range') return;
 
     const pattern = /[0-9]|\.|,|'| |Tab|Backspace|Enter|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|Delete|Escape/;
     if (!event.key.match(pattern)) event.preventDefault();
   };
+
+  /**
+   * Initialises the slider fill position to match the current filter state
+   */
+  #initSlider() {
+    const { rangeMinSlider, rangeMaxSlider } = this.refs;
+    if (!(rangeMinSlider instanceof HTMLInputElement) || !(rangeMaxSlider instanceof HTMLInputElement)) return;
+
+    const minVal = parseInt(rangeMinSlider.value, 10);
+    const maxVal = parseInt(rangeMaxSlider.value, 10);
+    const absMax = parseInt(rangeMaxSlider.max, 10);
+    this.#updateSliderFill(minVal, maxVal, absMax);
+  }
+
+  /**
+   * Handles range slider input events — updates text inputs and the fill track in real time.
+   * The filter is only submitted on the `change` event (mouse/touch release).
+   * @param {Event} event - The input event from one of the range thumbs
+   */
+  updateSlider(event) {
+    const { rangeMinSlider, rangeMaxSlider } = this.refs;
+    if (!(rangeMinSlider instanceof HTMLInputElement) || !(rangeMaxSlider instanceof HTMLInputElement)) return;
+
+    let minVal = parseInt(rangeMinSlider.value, 10);
+    let maxVal = parseInt(rangeMaxSlider.value, 10);
+    const absMax = parseInt(rangeMaxSlider.max, 10);
+
+    // Prevent the two thumbs from crossing each other
+    if (event.target === rangeMinSlider && minVal > maxVal) {
+      rangeMinSlider.value = String(maxVal);
+      minVal = maxVal;
+    } else if (event.target === rangeMaxSlider && maxVal < minVal) {
+      rangeMaxSlider.value = String(minVal);
+      maxVal = minVal;
+    }
+
+    this.#updateSliderFill(minVal, maxVal, absMax);
+    this.#updateTextInputsFromSlider(minVal, maxVal, absMax);
+  }
+
+  /**
+   * Updates the visual fill between the two range thumbs
+   * @param {number} minVal - Current min value in minor units
+   * @param {number} maxVal - Current max value in minor units
+   * @param {number} absMax - Absolute maximum in minor units
+   */
+  #updateSliderFill(minVal, maxVal, absMax) {
+    const { rangeFill } = this.refs;
+    if (!(rangeFill instanceof HTMLElement) || absMax === 0) return;
+
+    const leftPct = (minVal / absMax) * 100;
+    const rightPct = 100 - (maxVal / absMax) * 100;
+    rangeFill.style.left = `${leftPct}%`;
+    rangeFill.style.right = `${rightPct}%`;
+  }
+
+  /**
+   * Syncs the text inputs to match the current slider positions
+   * @param {number} minVal - Current min value in minor units
+   * @param {number} maxVal - Current max value in minor units
+   * @param {number} absMax - Absolute maximum in minor units
+   */
+  #updateTextInputsFromSlider(minVal, maxVal, absMax) {
+    const { minInput, maxInput } = this.refs;
+    const { currency, moneyFormat } = this;
+
+    if (minInput instanceof HTMLInputElement) {
+      minInput.value = minVal === 0 ? '' : formatMoney(minVal, moneyFormat, currency);
+    }
+    if (maxInput instanceof HTMLInputElement) {
+      maxInput.value = maxVal === absMax ? '' : formatMoney(maxVal, moneyFormat, currency);
+    }
+  }
+
+  /**
+   * Syncs the range slider thumbs to match the current text input values
+   */
+  #updateSliderFromInputs() {
+    const { minInput, maxInput, rangeMinSlider, rangeMaxSlider } = this.refs;
+    if (!(rangeMinSlider instanceof HTMLInputElement) || !(rangeMaxSlider instanceof HTMLInputElement)) return;
+
+    const absMax = parseInt(rangeMaxSlider.max, 10);
+    const { currency } = this;
+
+    let minVal = 0;
+    let maxVal = absMax;
+
+    if (minInput instanceof HTMLInputElement && minInput.value) {
+      minVal = convertMoneyToMinorUnits(minInput.value, currency) ?? 0;
+    }
+    if (maxInput instanceof HTMLInputElement && maxInput.value) {
+      maxVal = convertMoneyToMinorUnits(maxInput.value, currency) ?? absMax;
+    }
+
+    rangeMinSlider.value = String(Math.max(0, Math.min(minVal, absMax)));
+    rangeMaxSlider.value = String(Math.max(0, Math.min(maxVal, absMax)));
+    this.#updateSliderFill(minVal, maxVal, absMax);
+  }
 
   /**
    * Updates price filter and results
@@ -269,6 +373,7 @@ class PriceFacetComponent extends Component {
     facetsForm.updateFilters();
     this.#setMinAndMaxValues();
     this.#updateSummary();
+    this.#updateSliderFromInputs();
   }
 
   /**
@@ -367,7 +472,7 @@ class FacetClearComponent extends Component {
     }
 
     const container = event.target.closest('facet-inputs-component, price-facet-component');
-    container?.querySelectorAll('[type="checkbox"]:checked, input').forEach((input) => {
+    container?.querySelectorAll('[type="checkbox"]:checked, input:not([type="range"])').forEach((input) => {
       if (input instanceof HTMLInputElement) {
         input.checked = false;
         input.value = '';
@@ -837,4 +942,41 @@ class FacetStatusComponent extends Component {
 
 if (!customElements.get('facet-status-component')) {
   customElements.define('facet-status-component', FacetStatusComponent);
+}
+
+/**
+ * @typedef {Object} FilterSearchRefs
+ * @property {HTMLInputElement} searchInput - The search input element
+ */
+
+/**
+ * Provides live search/filter within a facet list panel.
+ * Shows only list items whose label contains the typed query.
+ * @extends {Component<FilterSearchRefs>}
+ */
+class FilterSearchComponent extends Component {
+  requiredRefs = ['searchInput'];
+
+  /**
+   * Filters visible list items based on the current search query
+   */
+  filterList() {
+    const { searchInput } = this.refs;
+    if (!(searchInput instanceof HTMLInputElement)) return;
+
+    const query = searchInput.value.toLowerCase().trim();
+    const facetItem = this.closest('.facets__item');
+    if (!facetItem) return;
+
+    const items = facetItem.querySelectorAll('[data-filter-label]');
+    items.forEach((item) => {
+      if (!(item instanceof HTMLElement)) return;
+      const label = item.dataset.filterLabel ?? '';
+      item.style.display = !query || label.includes(query) ? '' : 'none';
+    });
+  }
+}
+
+if (!customElements.get('filter-search-component')) {
+  customElements.define('filter-search-component', FilterSearchComponent);
 }

@@ -138,6 +138,27 @@
             assign render_show_more = true
           endif
         %}
+
+        {% assign filter_search_threshold = 8 %}
+        {% if filter.values.size > filter_search_threshold and is_swatch == false and is_image == false %}
+          <filter-search-component class="filter-search" data-skip-node-update="true">
+            <div class="filter-search__wrapper">
+              <span class="filter-search__icon svg-wrapper" aria-hidden="true">
+                {{- 'icon-search.svg' | inline_asset_content -}}
+              </span>
+              <input
+                type="text"
+                class="filter-search__input"
+                placeholder="{{ 'accessibility.search_input_label' | t }}"
+                aria-label="{{ 'accessibility.search_input_label' | t }}"
+                autocomplete="off"
+                on:input="/filterList"
+                ref="searchInput"
+              >
+            </div>
+          </filter-search-component>
+        {% endif %}
+
         {% liquid
           if render_show_more
             if filter_style == 'horizontal'
@@ -218,6 +239,7 @@
               %}
               <li
                 data-skip-node-update="true"
+                data-filter-label="{{ value.label | downcase | escape }}"
                 class="
                   facets__inputs-list-item
                   {% if hidden_class %} {{ hidden_class }}{% endif %}
@@ -886,6 +908,71 @@
       border-radius: var(--focus-outline-radius, 50%);
       background-color: transparent;
       display: inherit;
+    }
+  }
+
+  /* Filter search */
+  .filter-search {
+    display: block;
+    padding-block: var(--padding-xs);
+    padding-inline: var(--drawer-padding);
+
+    @media screen and (min-width: 750px) {
+      padding-inline: 0;
+    }
+  }
+
+  .facets--horizontal .filter-search {
+    @media screen and (min-width: 750px) {
+      padding-inline: var(--padding-md);
+      padding-block-start: var(--padding-md);
+      padding-block-end: 0;
+    }
+  }
+
+  .filter-search__wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .filter-search__icon {
+    position: absolute;
+    left: var(--padding-xs);
+    color: rgb(var(--color-foreground-rgb) / 0.45);
+    pointer-events: none;
+    flex-shrink: 0;
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+  }
+
+  .filter-search__input {
+    width: 100%;
+    padding-block: var(--padding-xs);
+    padding-inline-start: calc(var(--icon-size-sm) + var(--padding-sm) + var(--padding-xs));
+    padding-inline-end: var(--padding-xs);
+    border: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / 0.15);
+    border-radius: var(--style-border-radius-inputs);
+    background-color: rgb(var(--color-foreground-rgb) / 0.04);
+    font-size: var(--font-paragraph--size);
+    color: var(--color-foreground);
+    transition: border-color var(--animation-speed) var(--animation-easing),
+      background-color var(--animation-speed) var(--animation-easing);
+
+    &::placeholder {
+      color: rgb(var(--color-foreground-rgb) / 0.4);
+    }
+
+    &:hover {
+      border-color: rgb(var(--color-foreground-rgb) / 0.3);
+      background-color: rgb(var(--color-foreground-rgb) / 0.06);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-outline-width) solid currentcolor;
+      outline-offset: var(--focus-outline-offset);
+      border-color: var(--color-foreground);
+      background-color: transparent;
     }
   }
 {% endstylesheet %}
