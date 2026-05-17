@@ -261,7 +261,7 @@ class PriceFacetComponent extends Component {
   };
 
   /**
-   * Initialises the slider fill position to match the current filter state
+   * Initializes the slider fill position to match the current filter state
    */
   #initSlider() {
     const { rangeMinSlider, rangeMaxSlider } = this.refs;
@@ -307,7 +307,13 @@ class PriceFacetComponent extends Component {
    */
   #updateSliderFill(minVal, maxVal, absMax) {
     const { rangeFill } = this.refs;
-    if (!(rangeFill instanceof HTMLElement) || absMax === 0) return;
+    if (!(rangeFill instanceof HTMLElement)) return;
+
+    if (absMax === 0) {
+      rangeFill.style.left = '0%';
+      rangeFill.style.right = '0%';
+      return;
+    }
 
     const leftPct = (minVal / absMax) * 100;
     const rightPct = 100 - (maxVal / absMax) * 100;
