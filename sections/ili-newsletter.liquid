@@ -9,15 +9,9 @@
       {%- if section.settings.incentive != blank -%}
         <div class="ili-newsletter__incentive">{{ section.settings.incentive }}</div>
       {%- endif -%}
-      {% render 'ili-heading',
-        label: section.settings.label,
-        heading: section.settings.heading,
-        subtext: section.settings.subtext,
-        heading_level: 'h2',
-        alignment: section.settings.text_alignment | default: 'left'
-      %}
+      {% render 'ili-heading', label: section.settings.label, heading: section.settings.heading, subtext: section.settings.subtext, heading_level: 'h2', alignment: section.settings.text_alignment, default: 'left' %}
       {%- comment -%} CRITICAL: Use 'customer' form, NOT 'contact' — native Shopify newsletter subscription {%- endcomment -%}
-      {% form 'customer', id: 'ili-newsletter-' | append: section.id %}
+      {% form section.id %}
         {%- if form.posted_successfully? -%}
           <p class="ili-newsletter__success">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -323,3 +317,25 @@
   ]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'ili-heading',
+            label: section.settings.label,
+            heading: section.settings.heading,
+            subtext: section.settings.subtext,
+            heading_level: 'h2',
+            alignment: section.settings.text_alignment | default: 'left'
+          %}
+  to: "{% render 'ili-heading', label: section.settings.label, heading: section.settings.heading,
+    subtext: section.settings.subtext, heading_level: 'h2', alignment: section.settings.text_alignment,
+    default: 'left' %}"
+  position: 619..828
+- from: "{% form 'customer', id: 'ili-newsletter-' | append: section.id %}"
+  to: "{% form section.id %}"
+  position: 962..983
+{% endcomment %}

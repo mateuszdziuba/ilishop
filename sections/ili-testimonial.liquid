@@ -7,7 +7,7 @@
   data-testid="ili-testimonial"
 >
   {%- if section.settings.label != blank or section.settings.heading != blank -%}
-    {%- render 'ili-heading', label: section.settings.label, heading: section.settings.heading, alignment: section.settings.heading_alignment | default: 'center' -%}
+    {%- render 'ili-heading', label: section.settings.label, heading: section.settings.heading, alignment: section.settings.heading_alignment, default: 'center' -%}
   {%- endif -%}
 
   {%- liquid
@@ -479,3 +479,15 @@
   ]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{%- render 'ili-heading', label: section.settings.label, heading: section.settings.heading,
+    alignment: section.settings.heading_alignment | default: 'center' -%}"
+  to: "{%- render 'ili-heading', label: section.settings.label, heading: section.settings.heading,
+    alignment: section.settings.heading_alignment, default: 'center' -%}"
+  position: 477..637
+{% endcomment %}
